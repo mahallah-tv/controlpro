@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Kontrol Jam Adzan TV</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100vh;
+    background: #0f1115; color: #fff;
+    font-family: 'Poppins', -apple-system, sans-serif;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 20px 18px 60px; }
+  h1 { font-size: 1.15rem; margin: 6px 0 2px; text-align: center; }
+  .sub { text-align: center; color: #888; font-size: .78rem; margin-bottom: 22px; }
+  .card {
+    background: #1a1d24; border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px; padding: 18px; margin-bottom: 16px;
+  }
+  .card h2 { font-size: .88rem; margin: 0 0 4px; color: #f0a500; }
+  .card p.desc { font-size: .74rem; color: #888; margin: 0 0 12px; }
+  .pos-row { display: flex; gap: 8px; }
+  .pos-btn {
+    flex: 1; padding: 12px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06); color: #ddd; font-size: .82rem; font-weight: 600;
+    cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  .pos-btn.active { background: #f0a500; border-color: #f0a500; color: #111; }
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  input[type=range] { flex: 1; accent-color: #f0a500; height: 30px; }
+  .slider-val { min-width: 46px; text-align: right; font-size: .85rem; color: #f0a500; font-weight: 600; }
+  .status-screen {
+    min-height: 70vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 0 24px;
+  }
+  .status-screen .icon { font-size: 3rem; }
+  .status-screen p { color: #aaa; font-size: .9rem; line-height: 1.5; }
+  .btn-primary {
+    margin-top: 8px; padding: 11px 22px; border: none; border-radius: 10px;
+    background: #f0a500; color: #111; font-weight: 700; font-size: .85rem; cursor: pointer;
+  }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #262b36; color: #fff; padding: 10px 18px; border-radius: 10px;
+    font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot.online { background: #3ecf6a; }
+  .dot.offline { background: #888; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ==================== KONFIGURASI ====================
+  // HARUS SAMA PERSIS dengan FIREBASE_CONFIG di firebase-sync.js (satu project Firebase yang sama)
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAsgeM5Bh-imX7495mMJ1JJ-AkuyrzmA7c",
+    authDomain: "mahallahtvpro.firebaseapp.com",
+    projectId: "mahallahtvpro",
+    storageBucket: "mahallahtvpro.firebasestorage.app",
+    messagingSenderId: "1064313843618",
+    appId: "1:1064313843618:web:53f8261478f8301cfdccfb",
+  };
+
+  var LOCAL_KEY = 'jamAdzan_pairedDeviceId';
+
+  var root = document.getElementById('root');
+  var db, auth, myUid;
+  var deviceId, pairingToken;
+  var deviceDocRef, unsubDevice;
+  var applyingFromRemote = false;
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 1800);
+  }
+
+  function qs(name) {
+    var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  // ==================== LAYAR STATUS (loading / error / pairing) ====================
+  function renderStatus(icon, title, desc, showRetry) {
+    root.innerHTML =
+      '<div class="status-screen">' +
+      '<div class="icon">' + icon + '</div>' +
+      '<h1>' + title + '</h1>' +
+      '<p>' + desc + '</p>' +
+      (showRetry ? '<button class="btn-primary" onclick="location.reload()">Coba Lagi</button>' : '') +
+      '</div>';
+  }
+
+  // ==================== INISIALISASI ====================
+  function init() {
+    deviceId = qs('d') || localStorage.getItem(LOCAL_KEY);
+    pairingToken = qs('t');
+
+    if (!deviceId) {
+      renderStatus('📷', 'Belum Terhubung', 'Buka menu Pengaturan &gt; Template Layout di TV, lalu tekan tombol "Hubungkan HP" dan scan QR Code yang muncul.', false);
+      return;
+    }
+
+    renderStatus('⏳', 'Menghubungkan...', 'Menyambungkan ke TV, mohon tunggu sebentar.', false);
+
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    } catch (e) {
+      renderStatus('⚠️', 'Gagal Memuat', 'Terjadi kesalahan konfigurasi. Hubungi penyedia aplikasi.', true);
+      return;
+    }
+    db = firebase.firestore();
+    auth = firebase.auth();
+    deviceDocRef = db.collection('devices').doc(deviceId);
+
+    auth.onAuthStateChanged(function (user) {
+      if (!user) return;
+      myUid = user.uid;
+      checkAccess();
+    });
+    auth.signInAnonymously().catch(function () {
+      renderStatus('⚠️', 'Gagal Terhubung', 'Tidak dapat menyambung ke server. Periksa koneksi internet HP Anda.', true);
+    });
+  }
+
+  // ==================== CEK APAKAH HP INI SUDAH DIOTORISASI ====================
+  function checkAccess() {
+    deviceDocRef.get().then(function (snap) {
+      if (!snap.exists) {
+        renderStatus('⚠️', 'TV Tidak Ditemukan', 'Kode perangkat tidak valid. Coba scan ulang QR dari TV.', false);
+        return;
+      }
+      var data = snap.data();
+      var authorized = (data.authorizedUids || []).indexOf(myUid) !== -1;
+      if (authorized) {
+        localStorage.setItem(LOCAL_KEY, deviceId);
+        startControlPanel();
+      } else if (pairingToken) {
+        requestPairing();
+      } else {
+        renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
+      }
+    }).catch(function () {
+      // Kemungkinan besar: Security Rules menolak baca karena memang belum diotorisasi.
+      if (pairingToken) {
+        requestPairing();
+      } else {
+        renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
+      }
+    });
+  }
+
+  // ==================== KIRIM PERMINTAAN PAIRING ====================
+  function requestPairing() {
+    renderStatus('🔗', 'Menghubungkan ke TV...', 'Menunggu TV menyetujui permintaan ini.', false);
+
+    var reqRef = deviceDocRef.collection('pairingRequests').doc(myUid);
+    reqRef.set({
+      uid: myUid,
+      token: pairingToken,
+      status: 'pending',
+      requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }).then(function () {
+      var unsub = reqRef.onSnapshot(function (snap) {
+        if (!snap.exists) return;
+        var status = snap.data().status;
+        if (status === 'approved') {
+          unsub();
+          localStorage.setItem(LOCAL_KEY, deviceId);
+          toast('Berhasil terhubung ✓');
+          startControlPanel();
+        } else if (status === 'rejected') {
+          unsub();
+          renderStatus('✖️', 'Kode Kedaluwarsa', 'QR Code sudah tidak berlaku. Minta TV menampilkan QR baru lalu scan ulang.', false);
+        }
+      });
+      setTimeout(function () {
+        // Jika 60 detik tidak ada respon, kemungkinan TV offline/QR sudah tertutup.
+        reqRef.get().then(function (snap) {
+          if (snap.exists && snap.data().status === 'pending') {
+            unsub();
+            renderStatus('⏱️', 'Waktu Habis', 'TV tidak merespon. Pastikan TV menyala &amp; terhubung internet, lalu scan ulang QR.', true);
+          }
+        });
+      }, 60000);
+    }).catch(function (e) {
+      renderStatus('⚠️', 'Gagal Mengirim Permintaan', e.message, true);
+    });
+  }
+
+  // ==================== PANEL KONTROL ====================
+  function startControlPanel() {
+    root.innerHTML =
+      '<div class="wrap">' +
+      '<h1>🕌 Kontrol Jam Adzan TV</h1>' +
+      '<p class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></p>' +
+
+      '<div class="card">' +
+      '<h2>Posisi Popup Notifikasi</h2>' +
+      '<p class="desc">Berlaku untuk popup Menuju Waktu Adzan, Menunggu Iqamah, dan Luruskan Shaf.</p>' +
+      '<div class="pos-row">' +
+      '<button class="pos-btn" id="pos-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
+      '<button class="pos-btn" id="pos-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
+      '<button class="pos-btn" id="pos-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
+      '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+      '<h2>Ukuran Kotak Popup</h2>' +
+      '<p class="desc">Kotak &amp; huruf popup membesar/mengecil bersamaan.</p>' +
+      '<div class="slider-row">' +
+      '<input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)">' +
+      '<span class="slider-val" id="popup-scale-val">100%</span>' +
+      '</div>' +
+      '</div>' +
+
+      '<div class="card">' +
+      '<h2>Ukuran Font Universal</h2>' +
+      '<p class="desc">Membesarkan/mengecilkan seluruh teks di layar TV.</p>' +
+      '<div class="slider-row">' +
+      '<input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)">' +
+      '<span class="slider-val" id="font-scale-val">100%</span>' +
+      '</div>' +
+      '</div>' +
+
+      '<p class="sub" style="margin-top:24px">Perubahan tersimpan otomatis dan langsung tampil di TV.</p>' +
+      '</div>';
+
+    listenDeviceForUi();
+  }
+
+  function listenDeviceForUi() {
+    if (unsubDevice) unsubDevice();
+    unsubDevice = deviceDocRef.onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      var settings = (snap.data() || {}).settings || {};
+      applyingFromRemote = true;
+      if (settings.popupPosition) setActivePosButton(settings.popupPosition);
+      if (settings.popupScale) setSliderValue('popup-scale', settings.popupScale);
+      if (settings.globalFontScale) setSliderValue('font-scale', settings.globalFontScale);
+      applyingFromRemote = false;
+      setConnState(true);
+    }, function () {
+      setConnState(false);
+    });
+  }
+
+  function setConnState(online) {
+    var dot = document.getElementById('conn-dot');
+    var text = document.getElementById('conn-text');
+    if (!dot) return;
+    dot.className = 'dot ' + (online ? 'online' : 'offline');
+    text.textContent = online ? 'Terhubung' : 'Terputus, mencoba lagi...';
+  }
+
+  function setActivePosButton(pos) {
+    ['left', 'center', 'right'].forEach(function (p) {
+      var el = document.getElementById('pos-' + p);
+      if (el) el.classList.toggle('active', p === pos);
+    });
+  }
+
+  function setSliderValue(id, val) {
+    var el = document.getElementById(id);
+    var lbl = document.getElementById(id + '-val');
+    if (el) el.value = val;
+    if (lbl) lbl.textContent = val + '%';
+  }
+
+  function pushSetting(key, value) {
+    if (applyingFromRemote) return;
+    var patch = {};
+    patch['settings.' + key] = typeof value === 'string' ? value : parseInt(value, 10);
+    patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    patch.updatedBy = myUid;
+    deviceDocRef.update(patch).catch(function (e) {
+      toast('Gagal mengirim (offline?)');
+    });
+  }
+
+  // Dipakai oleh tombol/slider di HTML di atas
+  window.ControlPanel = {
+    setPos: function (pos) {
+      setActivePosButton(pos);
+      pushSetting('popupPosition', pos);
+    },
+    previewScale: function (val) { setSliderValue('popup-scale', val); },
+    commitScale: function (val) { pushSetting('popupScale', val); },
+    previewFont: function (val) { setSliderValue('font-scale', val); },
+    commitFont: function (val) { pushSetting('globalFontScale', val); },
+  };
+
+  init();
+})();
+</script>
+</body>
+</html>
