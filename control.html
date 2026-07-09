@@ -333,6 +333,8 @@
   ];
 
   function startControlPanel() {
+    
+  console.log('[Control] Panel dimulai, deviceId:', deviceId);
     root.innerHTML =
       '<div class="arch-pattern">' +
       '<div class="wrap">' +
@@ -348,6 +350,29 @@
     $('sections').innerHTML = buildSections();
     bindStaticEvents();
     listenDeviceForUi();
+
+      // Render HTML terlebih dahulu
+    document.getElementById('sections').innerHTML = buildSections();
+    
+    // Beri waktu untuk DOM update
+    setTimeout(function() {
+      bindStaticEvents();
+      listenDeviceForUi();
+    }, 100);
+
+      // Pastikan listener jalan
+    if (unsubDevice) unsubDevice();
+    unsubDevice = deviceDocRef.onSnapshot(function (snap) {
+      console.log('[Control] Snapshot diterima:', snap.exists);
+      if (!snap.exists) return;
+      current = (snap.data() || {}).settings || {};
+      console.log('[Control] Data settings:', Object.keys(current));
+      renderFromState();
+      setConnState(true);
+    }, function (err) {
+      console.error('[Control] Listener error:', err);
+      setConnState(false);
+    });
   }
 
   function sec(id, icon, title, sub, bodyHtml) {
@@ -452,6 +477,9 @@
     html += sec('tema', '🎨', 'Tema Warna', 'Skema warna tampilan TV',
       '<div class="theme-grid" id="theme-grid"></div>'
     );
+
+      console.log('[Control] buildSections length:', html.length);
+
 
     return html;
   }
