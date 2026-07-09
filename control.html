@@ -20,26 +20,36 @@
   }
   .card h2 { font-size: .88rem; margin: 0 0 4px; color: #f0a500; }
   .card p.desc { font-size: .74rem; color: #888; margin: 0 0 12px; }
-  .pos-row { display: flex; gap: 8px; }
+  .pos-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .pos-btn {
     flex: 1; padding: 12px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
     background: rgba(255,255,255,.06); color: #ddd; font-size: .82rem; font-weight: 600;
     cursor: pointer; transition: background .15s, border-color .15s;
+    min-width: 60px;
   }
   .pos-btn.active { background: #f0a500; border-color: #f0a500; color: #111; }
   .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
   input[type=range] { flex: 1; accent-color: #f0a500; height: 30px; }
   .slider-val { min-width: 46px; text-align: right; font-size: .85rem; color: #f0a500; font-weight: 600; }
+  .btn-primary {
+    margin-top: 8px; padding: 11px 22px; border: none; border-radius: 10px;
+    background: #f0a500; color: #111; font-weight: 700; font-size: .85rem; cursor: pointer;
+  }
+  .btn-secondary {
+    margin-top: 8px; padding: 11px 22px; border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px; background: rgba(255,255,255,.06); color: #ddd; font-weight: 600;
+    font-size: .85rem; cursor: pointer; width: 100%;
+  }
+  .btn-danger {
+    padding: 8px 16px; border: none; border-radius: 8px;
+    background: #c0392b; color: #fff; font-weight: 600; font-size: .8rem; cursor: pointer;
+  }
   .status-screen {
     min-height: 70vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 0 24px;
   }
   .status-screen .icon { font-size: 3rem; }
   .status-screen p { color: #aaa; font-size: .9rem; line-height: 1.5; }
-  .btn-primary {
-    margin-top: 8px; padding: 11px 22px; border: none; border-radius: 10px;
-    background: #f0a500; color: #111; font-weight: 700; font-size: .85rem; cursor: pointer;
-  }
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: #262b36; color: #fff; padding: 10px 18px; border-radius: 10px;
@@ -49,6 +59,63 @@
   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
   .dot.online { background: #3ecf6a; }
   .dot.offline { background: #888; }
+  .toggle-row { display: flex; align-items: center; gap: 12px; margin: 6px 0; }
+  .toggle-row label { font-size: .85rem; color: #ccc; cursor: pointer; }
+  .toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #f0a500; cursor: pointer; }
+  .input-field {
+    width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px; padding: 10px 12px; color: #fff; font-size: .85rem;
+    font-family: 'Poppins', sans-serif; outline: none; margin: 4px 0 8px;
+  }
+  .input-field:focus { border-color: #f0a500; }
+  .input-field::placeholder { color: #666; }
+  textarea.input-field { resize: vertical; min-height: 60px; }
+  select.input-field { appearance: auto; background: #1a1d24; }
+  select.input-field option { background: #1a1d24; color: #fff; }
+  .section-divider { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 14px 0; }
+  .audio-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;
+  }
+  .audio-item .name { flex: 1; font-size: .8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .audio-item .badge { font-size: .7rem; color: #888; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .swatch-grid { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .swatch {
+    width: 30px; height: 30px; border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; transition: border-color .15s;
+  }
+  .swatch:hover, .swatch.active { border-color: #fff; }
+  .sm-set {
+    background: rgba(255,255,255,.05); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .sm-set .sm-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .sm-set .sm-label { font-size: .75rem; color: #888; min-width: 70px; }
+  .sm-set .sm-time { width: 44px; text-align: center; }
+  .collapsible {
+    cursor: pointer; user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .collapsible .arrow { transition: transform .2s; font-size: .7rem; }
+  .collapsible.open .arrow { transform: rotate(180deg); }
+  .collapsible-content { display: none; padding-top: 10px; }
+  .collapsible-content.open { display: block; }
+  .prayer-offset-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 4px 0; }
+  .prayer-offset-row .btn-sm {
+    padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06); color: #ddd; font-size: .75rem; cursor: pointer;
+  }
+  .prayer-offset-row .btn-sm:hover { background: rgba(255,255,255,.12); }
+  .prayer-offset-row .btn-sm.active { background: #f0a500; color: #111; border-color: #f0a500; }
+  .event-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.05); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;
+  }
+  .event-item .info { flex: 1; }
+  .event-item .name { font-size: .85rem; font-weight: 600; }
+  .event-item .date { font-size: .7rem; color: #888; }
+  .event-item .days { font-size: .7rem; color: #f0a500; }
 </style>
 </head>
 <body>
@@ -64,7 +131,6 @@
   'use strict';
 
   // ==================== KONFIGURASI ====================
-  // HARUS SAMA PERSIS dengan FIREBASE_CONFIG di firebase-sync.js (satu project Firebase yang sama)
   var FIREBASE_CONFIG = {
     apiKey: "AIzaSyAsgeM5Bh-imX7495mMJ1JJ-AkuyrzmA7c",
     authDomain: "mahallahtvpro.firebaseapp.com",
@@ -75,13 +141,13 @@
   };
 
   var LOCAL_KEY = 'jamAdzan_pairedDeviceId';
-
   var root = document.getElementById('root');
   var db, auth, myUid;
   var deviceId, pairingToken;
   var deviceDocRef, unsubDevice;
   var applyingFromRemote = false;
 
+  // ==================== UTILITY ====================
   function toast(msg) {
     var t = document.getElementById('toast');
     t.textContent = msg;
@@ -94,7 +160,6 @@
     return m ? decodeURIComponent(m[1]) : null;
   }
 
-  // ==================== LAYAR STATUS (loading / error / pairing) ====================
   function renderStatus(icon, title, desc, showRetry) {
     root.innerHTML =
       '<div class="status-screen">' +
@@ -137,7 +202,6 @@
     });
   }
 
-  // ==================== CEK APAKAH HP INI SUDAH DIOTORISASI ====================
   function checkAccess() {
     deviceDocRef.get().then(function (snap) {
       if (!snap.exists) {
@@ -155,7 +219,6 @@
         renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
       }
     }).catch(function () {
-      // Kemungkinan besar: Security Rules menolak baca karena memang belum diotorisasi.
       if (pairingToken) {
         requestPairing();
       } else {
@@ -164,7 +227,6 @@
     });
   }
 
-  // ==================== KIRIM PERMINTAAN PAIRING ====================
   function requestPairing() {
     renderStatus('🔗', 'Menghubungkan ke TV...', 'Menunggu TV menyetujui permintaan ini.', false);
 
@@ -189,11 +251,10 @@
         }
       });
       setTimeout(function () {
-        // Jika 60 detik tidak ada respon, kemungkinan TV offline/QR sudah tertutup.
         reqRef.get().then(function (snap) {
           if (snap.exists && snap.data().status === 'pending') {
             unsub();
-            renderStatus('⏱️', 'Waktu Habis', 'TV tidak merespon. Pastikan TV menyala &amp; terhubung internet, lalu scan ulang QR.', true);
+            renderStatus('⏱️', 'Waktu Habis', 'TV tidak merespon. Pastikan TV menyala & terhubung internet, lalu scan ulang QR.', true);
           }
         });
       }, 60000);
@@ -204,61 +265,360 @@
 
   // ==================== PANEL KONTROL ====================
   function startControlPanel() {
-    root.innerHTML =
-      '<div class="wrap">' +
-      '<h1>🕌 Kontrol Jam Adzan TV</h1>' +
-      '<p class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></p>' +
-
-      '<div class="card">' +
-      '<h2>Posisi Popup Notifikasi</h2>' +
-      '<p class="desc">Berlaku untuk popup Menuju Waktu Adzan, Menunggu Iqamah, dan Luruskan Shaf.</p>' +
-      '<div class="pos-row">' +
-      '<button class="pos-btn" id="pos-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
-      '<button class="pos-btn" id="pos-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
-      '<button class="pos-btn" id="pos-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
-      '</div>' +
-      '</div>' +
-
-      '<div class="card">' +
-      '<h2>Ukuran Kotak Popup</h2>' +
-      '<p class="desc">Kotak &amp; huruf popup membesar/mengecil bersamaan.</p>' +
-      '<div class="slider-row">' +
-      '<input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)">' +
-      '<span class="slider-val" id="popup-scale-val">100%</span>' +
-      '</div>' +
-      '</div>' +
-
-      '<div class="card">' +
-      '<h2>Ukuran Font Universal</h2>' +
-      '<p class="desc">Membesarkan/mengecilkan seluruh teks di layar TV.</p>' +
-      '<div class="slider-row">' +
-      '<input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)">' +
-      '<span class="slider-val" id="font-scale-val">100%</span>' +
-      '</div>' +
-      '</div>' +
-
-      '<p class="sub" style="margin-top:24px">Perubahan tersimpan otomatis dan langsung tampil di TV.</p>' +
-      '</div>';
-
+    root.innerHTML = renderMainPanel();
     listenDeviceForUi();
+    loadInitialData();
   }
 
-  function listenDeviceForUi() {
-    if (unsubDevice) unsubDevice();
-    unsubDevice = deviceDocRef.onSnapshot(function (snap) {
-      if (!snap.exists) return;
-      var settings = (snap.data() || {}).settings || {};
-      applyingFromRemote = true;
-      if (settings.popupPosition) setActivePosButton(settings.popupPosition);
-      if (settings.popupScale) setSliderValue('popup-scale', settings.popupScale);
-      if (settings.globalFontScale) setSliderValue('font-scale', settings.globalFontScale);
-      applyingFromRemote = false;
-      setConnState(true);
-    }, function () {
-      setConnState(false);
-    });
+  function renderMainPanel() {
+    return `
+      <div class="wrap">
+        <h1>🕌 Kontrol Jam Adzan TV</h1>
+        <p class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></p>
+
+        <!-- ====== LAYOUT & POPUP ====== -->
+        <div class="card">
+          <h2>📐 Template Layout</h2>
+          <p class="desc">Pilih tata letak kartu waktu shalat.</p>
+          <div class="pos-row">
+            <button class="pos-btn" id="tpl-default" onclick="ControlPanel.setTemplate('default')">Default</button>
+            <button class="pos-btn" id="tpl-cardkiri" onclick="ControlPanel.setTemplate('cardkiri')">⬅ Kiri</button>
+            <button class="pos-btn" id="tpl-cardatas" onclick="ControlPanel.setTemplate('cardatas')">⬆ Atas</button>
+          </div>
+          <p style="color:#888;font-size:.72rem;text-align:center;margin-top:6px" id="tpl-active-label">Aktif: Default</p>
+        </div>
+
+        <div class="card">
+          <h2>📍 Posisi Popup Notifikasi</h2>
+          <p class="desc">Berlaku untuk popup Menuju Waktu Adzan, Menunggu Iqamah, dan Luruskan Shaf.</p>
+          <div class="pos-row">
+            <button class="pos-btn" id="pos-left" onclick="ControlPanel.setPos('left')">⬅ Kiri</button>
+            <button class="pos-btn" id="pos-center" onclick="ControlPanel.setPos('center')">⬍ Tengah</button>
+            <button class="pos-btn" id="pos-right" onclick="ControlPanel.setPos('right')">➡ Kanan</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📏 Ukuran Kotak Popup</h2>
+          <p class="desc">Kotak &amp; huruf popup membesar/mengecil bersamaan.</p>
+          <div class="slider-row">
+            <input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)">
+            <span class="slider-val" id="popup-scale-val">100%</span>
+          </div>
+          <button class="btn-secondary" style="margin-top:6px" onclick="ControlPanel.previewPopup()">👁 Pratinjau Popup</button>
+        </div>
+
+        <div class="card">
+          <h2>🔤 Ukuran Font Universal</h2>
+          <p class="desc">Membesarkan/mengecilkan seluruh teks di layar TV.</p>
+          <div class="slider-row">
+            <input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)">
+            <span class="slider-val" id="font-scale-val">100%</span>
+          </div>
+        </div>
+
+        <!-- ====== MASJID ====== -->
+        <div class="card">
+          <h2>🕌 Pengaturan Masjid</h2>
+          <p class="desc">Ubah nama masjid, lokasi, dan kota untuk API waktu shalat.</p>
+          <input class="input-field" id="input-masjid-name" placeholder="Nama Masjid">
+          <input class="input-field" id="input-masjid-location" placeholder="Lokasi">
+          <select class="input-field" id="input-city-api"></select>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.saveMasjid()">💾 Simpan Masjid</button>
+        </div>
+
+        <!-- ====== RUNNING TEXT ====== -->
+        <div class="card">
+          <h2>📝 Running Text</h2>
+          <p class="desc">Teks berjalan di bagian bawah layar.</p>
+          <textarea class="input-field" id="rt-text" rows="2" placeholder="Isi teks berjalan..."></textarea>
+          <div class="slider-row">
+            <span style="font-size:.7rem;color:#888">Kecepatan</span>
+            <input type="range" id="rt-speed" min="20" max="200" step="5" value="60">
+            <span class="slider-val" id="rt-speed-val">60s</span>
+          </div>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.saveRunningText()">💾 Simpan Running Text</button>
+        </div>
+
+        <!-- ====== BACKGROUND ====== -->
+        <div class="card">
+          <h2>🖼 Background</h2>
+          <p class="desc">Upload gambar, durasi slide, dan transisi.</p>
+          <input class="input-field" type="file" id="upload-bg" accept="image/*" multiple onchange="ControlPanel.addBackgrounds(this)">
+          <div id="bg-preview-list" style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0"></div>
+          <div class="slider-row">
+            <span style="font-size:.7rem;color:#888">Durasi</span>
+            <input type="range" id="bg-speed" min="2" max="30" step="1" value="8">
+            <span class="slider-val" id="bg-speed-val">8s</span>
+          </div>
+          <select class="input-field" id="bg-transition">
+            <option value="fade">Fade</option>
+            <option value="slide-left">Slide Kiri</option>
+            <option value="slide-right">Slide Kanan</option>
+            <option value="zoom-in">Zoom In</option>
+            <option value="zoom-out">Zoom Out</option>
+            <option value="flip">Flip</option>
+          </select>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.saveBgSettings()">💾 Simpan Background</button>
+        </div>
+
+        <!-- ====== AUDIO ====== -->
+        <div class="card">
+          <h2>🔊 Audio</h2>
+          <p class="desc">Kelola audio Pre-Adzan, Adzan, dan Alarm.</p>
+
+          <div class="collapsible open" onclick="ControlPanel.toggleCollapse(this)">
+            <span>🎵 Pre-Adzan</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="collapsible-content open" id="audio-pre-adzan-list">
+            <div id="pre-adzan-items"></div>
+            <input class="input-field" type="file" id="upload-pre-adzan" accept="audio/*" multiple onchange="ControlPanel.addSettingsAudio('pre-adzan',this)">
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Volume</span>
+              <input type="range" id="vol-pre-adzan" min="0" max="100" value="100" oninput="ControlPanel.setVolume('pre-adzan',this.value)">
+              <span class="slider-val" id="vol-pre-adzan-val">100%</span>
+            </div>
+          </div>
+
+          <div class="collapsible open" onclick="ControlPanel.toggleCollapse(this)">
+            <span>📢 Adzan</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="collapsible-content open" id="audio-adzan-list">
+            <div id="adzan-items"></div>
+            <input class="input-field" type="file" id="upload-adzan" accept="audio/*" multiple onchange="ControlPanel.addSettingsAudio('adzan',this)">
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Volume</span>
+              <input type="range" id="vol-adzan" min="0" max="100" value="100" oninput="ControlPanel.setVolume('adzan',this.value)">
+              <span class="slider-val" id="vol-adzan-val">100%</span>
+            </div>
+          </div>
+
+          <div class="collapsible open" onclick="ControlPanel.toggleCollapse(this)">
+            <span>🔔 Alarm</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="collapsible-content open" id="audio-alarm-list">
+            <div id="alarm-items"></div>
+            <input class="input-field" type="file" id="upload-alarm" accept="audio/*" multiple onchange="ControlPanel.addSettingsAudio('alarm',this)">
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Volume</span>
+              <input type="range" id="vol-alarm" min="0" max="100" value="100" oninput="ControlPanel.setVolume('alarm',this.value)">
+              <span class="slider-val" id="vol-alarm-val">100%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== PAPAN INFORMASI ====== -->
+        <div class="card">
+          <h2>📋 Papan Informasi</h2>
+          <p class="desc">Pengumuman yang tampil di sisi kanan layar.</p>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-papan" onchange="ControlPanel.togglePapan(this.checked)">
+            <label for="toggle-papan">Aktifkan Papan Info</label>
+          </div>
+          <input class="input-field" id="papan-title" placeholder="Judul Pengumuman">
+          <textarea class="input-field" id="papan-desc" rows="2" placeholder="Deskripsi..."></textarea>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.savePapan()">💾 Simpan Papan Info</button>
+        </div>
+
+        <!-- ====== KAJIAN ====== -->
+        <div class="card">
+          <h2>🎓 Mode Kajian</h2>
+          <p class="desc">Mode presentasi dengan gambar/video/stream dan pemateri.</p>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-kajian" onchange="ControlPanel.toggleKajian(this.checked)">
+            <label for="toggle-kajian">Aktifkan Mode Kajian</label>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-hide-cards" onchange="ControlPanel.toggleHideCards(this.checked)">
+            <label for="toggle-hide-cards">Sembunyikan Card Adzan</label>
+          </div>
+          <input class="input-field" type="file" id="upload-kajian-img" accept="image/*" onchange="ControlPanel.setKajianContent('image',this)">
+          <input class="input-field" type="file" id="upload-kajian-video" accept="video/*" onchange="ControlPanel.setKajianContent('video',this)">
+          <input class="input-field" id="kajian-url" placeholder="URL Video / Stream (YouTube, MP4, dll)">
+          <button class="btn-secondary" onclick="ControlPanel.applyKajianUrl()">🔗 Terapkan URL</button>
+          <input class="input-field" id="kajian-pemateri" placeholder="Nama Pemateri">
+          <div class="slider-row">
+            <span style="font-size:.7rem;color:#888">Delay</span>
+            <input type="range" id="kajian-delay" min="0" max="60" step="1" value="5">
+            <span class="slider-val" id="kajian-delay-val">5s</span>
+          </div>
+          <div class="slider-row">
+            <span style="font-size:.7rem;color:#888">Durasi</span>
+            <input type="range" id="kajian-duration" min="5" max="120" step="5" value="30">
+            <span class="slider-val" id="kajian-duration-val">30s</span>
+          </div>
+          <div id="ribbon-tema-grid" style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0"></div>
+          <div class="slider-row">
+            <span style="font-size:.7rem;color:#888">Font Pemateri</span>
+            <input type="range" id="ribbon-font-size" min="12" max="48" step="1" value="17" oninput="ControlPanel.previewRibbonFont(this.value)">
+            <span class="slider-val" id="ribbon-font-size-val">17px</span>
+          </div>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.saveKajian()">💾 Simpan Kajian</button>
+        </div>
+
+        <!-- ====== LIVE KAMERA ====== -->
+        <div class="card">
+          <h2>📷 Live Kamera</h2>
+          <p class="desc">Pilih dan kelola kamera untuk streaming langsung.</p>
+          <div class="grid-2">
+            <select class="input-field" id="camera-1"></select>
+            <select class="input-field" id="camera-2"></select>
+            <select class="input-field" id="camera-3"></select>
+            <select class="input-field" id="camera-4"></select>
+          </div>
+          <div class="grid-2" style="margin:8px 0">
+            <button class="btn-primary" onclick="ControlPanel.startCamera()">▶ Mulai Kamera</button>
+            <button class="btn-primary" style="background:#e74c3c" onclick="ControlPanel.toggleRekam()">⏺ Rekam</button>
+          </div>
+          <div class="grid-2">
+            <button class="pos-btn" onclick="ControlPanel.switchCamera(1)">Kamera 1</button>
+            <button class="pos-btn" onclick="ControlPanel.switchCamera(2)">Kamera 2</button>
+            <button class="pos-btn" onclick="ControlPanel.switchCamera(3)">Kamera 3</button>
+            <button class="pos-btn" onclick="ControlPanel.switchCamera(4)">Kamera 4</button>
+          </div>
+          <select class="input-field" id="camera-transition">
+            <option value="static">Statis</option>
+            <option value="fade">Fade</option>
+          </select>
+        </div>
+
+        <!-- ====== DONASI ====== -->
+        <div class="card">
+          <h2>💳 Donasi</h2>
+          <p class="desc">Tampilkan QR Code donasi di layar.</p>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-donasi" onchange="ControlPanel.toggleDonasi(this.checked)">
+            <label for="toggle-donasi">Aktifkan Donasi</label>
+          </div>
+          <input class="input-field" id="donasi-judul" placeholder="Judul Donasi">
+          <input class="input-field" type="file" id="donasi-qr" accept="image/*">
+          <textarea class="input-field" id="donasi-desc" rows="2" placeholder="Deskripsi (opsional)"></textarea>
+          <button class="btn-primary" style="width:100%" onclick="ControlPanel.saveDonasi()">💾 Simpan Donasi</button>
+        </div>
+
+        <!-- ====== TEMPLATE & TEMA ====== -->
+        <div class="card">
+          <h2>🎨 Tema</h2>
+          <p class="desc">Pilih tema global atau kustomisasi per elemen.</p>
+          <div id="tema-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin:6px 0"></div>
+          <div id="custom-theme-list"></div>
+        </div>
+
+        <!-- ====== MODE SLEEP ====== -->
+        <div class="card">
+          <h2>🗲 Mode Sleep</h2>
+          <p class="desc">Jadwalkan overlay hitam otomatis (misal untuk istirahat).</p>
+          <div class="toggle-row">
+            <input type="checkbox" id="sm-toggle" onchange="ControlPanel.toggleSleep(this.checked)">
+            <label for="sm-toggle">Aktifkan Mode Sleep</label>
+          </div>
+          <div id="sm-sets-container"></div>
+          <button class="btn-secondary" onclick="ControlPanel.addSleepSet()">＋ Tambah Set</button>
+          <button class="btn-primary" style="width:100%;margin-top:8px" onclick="ControlPanel.saveSleep()">💾 Simpan Sleep Mode</button>
+        </div>
+
+        <!-- ====== HARI BESAR ISLAM ====== -->
+        <div class="card">
+          <h2>📅 Hari Besar Islam</h2>
+          <p class="desc">Kelola daftar hari besar Islam.</p>
+          <div id="event-list"></div>
+          <input class="input-field" id="event-name" placeholder="Nama Acara">
+          <div style="display:flex;gap:8px">
+            <input class="input-field" id="event-month" type="number" min="1" max="12" placeholder="Bulan (1-12)">
+            <input class="input-field" id="event-day" type="number" min="1" max="30" placeholder="Tanggal (1-30)">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-primary" style="flex:1" onclick="ControlPanel.saveEvent()">💾 Simpan</button>
+            <button class="btn-secondary" style="flex:1" onclick="ControlPanel.clearEventForm()">↺ Reset</button>
+          </div>
+        </div>
+
+        <!-- ====== PRAYER SETTINGS ====== -->
+        <div class="card">
+          <h2>⏱ Pengaturan Waktu Shalat</h2>
+          <p class="desc">Atur countdown, iqamah, overlay, dan offset untuk setiap waktu shalat.</p>
+          <select class="input-field" id="prayer-select" onchange="ControlPanel.loadPrayerSettings(this.value)">
+            <option value="Shubuh">Shubuh</option>
+            <option value="Dzuhur">Dzuhur</option>
+            <option value="Ashar">Ashar</option>
+            <option value="Maghrib">Maghrib</option>
+            <option value="Isya">Isya</option>
+            <option value="Imsak">Imsak</option>
+            <option value="Syuruq">Syuruq</option>
+            <option value="Dhuha">Dhuha</option>
+          </select>
+          <div id="prayer-settings-content">
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Countdown Sebelum</span>
+              <input type="range" id="p-countdown" min="0" max="30" step="1" value="3">
+              <span class="slider-val" id="p-countdown-val">3 min</span>
+            </div>
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Durasi Iqamah</span>
+              <input type="range" id="p-iqamah" min="0" max="30" step="1" value="10">
+              <span class="slider-val" id="p-iqamah-val">10 min</span>
+            </div>
+            <div class="slider-row">
+              <span style="font-size:.7rem;color:#888">Overlay Hitam</span>
+              <input type="range" id="p-overlay" min="0" max="60" step="1" value="15">
+              <span class="slider-val" id="p-overlay-val">15 min</span>
+            </div>
+            <div style="margin-top:8px">
+              <label style="font-size:.75rem;color:#888">Offset Waktu</label>
+              <div class="prayer-offset-row">
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(-10)">-10</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(-5)">-5</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(-1)">-1</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(0)">Reset</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(1)">+1</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(5)">+5</button>
+                <button class="btn-sm" onclick="ControlPanel.adjustOffset(10)">+10</button>
+              </div>
+              <span style="font-size:.75rem;color:#888">Offset: <span id="p-offset-val">0</span> min</span>
+            </div>
+          </div>
+          <button class="btn-primary" style="width:100%;margin-top:8px" onclick="ControlPanel.savePrayerSettings()">💾 Simpan Pengaturan</button>
+        </div>
+
+        <!-- ====== MODE MUADZIN ====== -->
+        <div class="card">
+          <h2>🔊 Mode Muadzin</h2>
+          <p class="desc">Kelola audio adzan dan pilih yang aktif.</p>
+          <div id="muadzin-list"></div>
+          <input class="input-field" type="file" id="upload-muadzin" accept="audio/*" multiple onchange="ControlPanel.addMuadzinAudio(this)">
+          <button class="btn-primary" style="width:100%;margin-top:8px" onclick="ControlPanel.toggleMute()">🔇 Mute Semua</button>
+        </div>
+
+        <!-- ====== TOGGLES ====== -->
+        <div class="card">
+          <h2>⚙️ Toggle Fitur</h2>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-dhuha" onchange="ControlPanel.toggleDhuha(this.checked)">
+            <label for="toggle-dhuha">Tampilkan Dhuha</label>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="toggle-mode-jumat" onchange="ControlPanel.toggleModeJumat(this.checked)">
+            <label for="toggle-mode-jumat">Mode Jum'at</label>
+          </div>
+        </div>
+
+        <!-- ====== HUBUNGAN ====== -->
+        <div class="card">
+          <h2>🔗 Koneksi</h2>
+          <p class="desc">Status koneksi ke TV dan perangkat terhubung.</p>
+          <p style="font-size:.8rem;color:#888">Device ID: <span id="device-id-display">${deviceId}</span></p>
+          <button class="btn-secondary" onclick="ControlPanel.repair()">🔄 Hubungkan Ulang</button>
+        </div>
+
+        <p class="sub" style="margin-top:24px">Perubahan tersimpan otomatis dan langsung tampil di TV.</p>
+      </div>
+    `;
   }
 
+  // ==================== UI HELPERS ====================
   function setConnState(online) {
     var dot = document.getElementById('conn-dot');
     var text = document.getElementById('conn-text');
@@ -274,11 +634,11 @@
     });
   }
 
-  function setSliderValue(id, val) {
+  function setSliderValue(id, val, suffix) {
     var el = document.getElementById(id);
     var lbl = document.getElementById(id + '-val');
     if (el) el.value = val;
-    if (lbl) lbl.textContent = val + '%';
+    if (lbl) lbl.textContent = val + (suffix || '');
   }
 
   function pushSetting(key, value) {
@@ -292,18 +652,777 @@
     });
   }
 
-  // Dipakai oleh tombol/slider di HTML di atas
+  // ==================== LISTENER ====================
+  function listenDeviceForUi() {
+    if (unsubDevice) unsubDevice();
+    unsubDevice = deviceDocRef.onSnapshot(function (snap) {
+      if (!snap.exists) return;
+      var settings = (snap.data() || {}).settings || {};
+      applyingFromRemote = true;
+      
+      // Layout & Popup
+      if (settings.popupPosition) setActivePosButton(settings.popupPosition);
+      if (settings.popupScale) setSliderValue('popup-scale', settings.popupScale);
+      if (settings.globalFontScale) setSliderValue('font-scale', settings.globalFontScale);
+      
+      // Template
+      if (settings.template) {
+        ['default', 'cardkiri', 'cardatas'].forEach(function(t) {
+          var el = document.getElementById('tpl-' + t);
+          if (el) el.classList.toggle('active', t === settings.template);
+        });
+        var lbl = document.getElementById('tpl-active-label');
+        if (lbl) {
+          var names = { default: 'Default', cardkiri: 'Card Kiri', cardatas: 'Card Atas' };
+          lbl.textContent = 'Aktif: ' + (names[settings.template] || settings.template);
+        }
+      }
+      
+      // Running Text
+      if (settings.runningText) {
+        var rt = document.getElementById('rt-text');
+        if (rt) rt.value = settings.runningText;
+      }
+      if (settings.runningTextSpeed) {
+        setSliderValue('rt-speed', settings.runningTextSpeed);
+      }
+      
+      // Background
+      if (settings.bgSettings) {
+        var bg = settings.bgSettings;
+        if (bg.speed) setSliderValue('bg-speed', bg.speed);
+        if (bg.mode) {
+          var sel = document.getElementById('bg-transition');
+          if (sel) sel.value = bg.mode;
+        }
+      }
+      
+      // Papan Info
+      if (settings.papanInfo) {
+        var pi = settings.papanInfo;
+        var cb = document.getElementById('toggle-papan');
+        if (cb) cb.checked = !!pi.enabled;
+        var title = document.getElementById('papan-title');
+        if (title) title.value = pi.title || '';
+        var desc = document.getElementById('papan-desc');
+        if (desc) desc.value = pi.desc || '';
+      }
+      
+      // Kajian
+      if (settings.kajian) {
+        var kaj = settings.kajian;
+        var cbK = document.getElementById('toggle-kajian');
+        if (cbK) cbK.checked = !!kaj.enabled;
+        var pem = document.getElementById('kajian-pemateri');
+        if (pem) pem.value = kaj.pemateri || '';
+        if (kaj.delay) setSliderValue('kajian-delay', kaj.delay);
+        if (kaj.duration) setSliderValue('kajian-duration', kaj.duration);
+        if (kaj.ribbonFontSize) setSliderValue('ribbon-font-size', kaj.ribbonFontSize);
+      }
+      
+      // Donasi
+      if (settings.donasi) {
+        var don = settings.donasi;
+        var cbD = document.getElementById('toggle-donasi');
+        if (cbD) cbD.checked = !!don.enabled;
+        var jd = document.getElementById('donasi-judul');
+        if (jd) jd.value = don.judul || '';
+        var dd = document.getElementById('donasi-desc');
+        if (dd) dd.value = don.desc || '';
+      }
+      
+      // Toggles
+      if (settings.dhuhaEnabled !== undefined) {
+        var cbDh = document.getElementById('toggle-dhuha');
+        if (cbDh) cbDh.checked = !!settings.dhuhaEnabled;
+      }
+      if (settings.modeJumat !== undefined) {
+        var cbJ = document.getElementById('toggle-mode-jumat');
+        if (cbJ) cbJ.checked = !!settings.modeJumat;
+      }
+      if (settings.hideCards !== undefined) {
+        var cbH = document.getElementById('toggle-hide-cards');
+        if (cbH) cbH.checked = !!settings.hideCards;
+      }
+      
+      // Sleep Mode
+      if (settings.sleepMode) {
+        var sm = settings.sleepMode;
+        var cbS = document.getElementById('sm-toggle');
+        if (cbS) cbS.checked = !!sm.enabled;
+        renderSleepSets(sm.sets || []);
+      }
+      
+      // Audio Volume
+      ['pre-adzan', 'adzan', 'alarm'].forEach(function(type) {
+        var key = 'audioVolume_' + type;
+        if (settings[key] !== undefined) {
+          setSliderValue('vol-' + type, settings[key]);
+        }
+      });
+      
+      applyingFromRemote = false;
+      setConnState(true);
+    }, function () {
+      setConnState(false);
+    });
+  }
+
+  // ==================== RENDER FUNCTIONS ====================
+  function renderSleepSets(sets) {
+    var container = document.getElementById('sm-sets-container');
+    if (!container) return;
+    if (!sets || !sets.length) sets = [{ id: 1, offH: '20', offM: '00', onH: '03', onM: '30' }];
+    var html = '';
+    sets.forEach(function(s, idx) {
+      html += `
+        <div class="sm-set">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:.8rem;color:#aaa">Set ${idx + 1}</span>
+            ${sets.length > 1 ? `<button class="btn-danger" style="padding:2px 8px;font-size:.7rem" onclick="ControlPanel.removeSleepSet(${s.id})">✕</button>` : ''}
+          </div>
+          <div class="sm-row">
+            <span class="sm-label">OFF</span>
+            <input class="input-field sm-time" type="number" min="0" max="23" value="${s.offH}" id="sm-off-h-${s.id}">
+            <span>:</span>
+            <input class="input-field sm-time" type="number" min="0" max="59" value="${s.offM}" id="sm-off-m-${s.id}">
+          </div>
+          <div class="sm-row">
+            <span class="sm-label">ON</span>
+            <input class="input-field sm-time" type="number" min="0" max="23" value="${s.onH}" id="sm-on-h-${s.id}">
+            <span>:</span>
+            <input class="input-field sm-time" type="number" min="0" max="59" value="${s.onM}" id="sm-on-m-${s.id}">
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderTemaUI() {
+    var grid = document.getElementById('tema-grid');
+    if (!grid) return;
+    var temas = [
+      { id: 'default', name: 'Classic Dark', colors: ['#000', '#F5A623'] },
+      { id: 'emerald', name: 'Emerald', colors: ['#0d1f1a', '#27ae60'] },
+      { id: 'royal', name: 'Royal Blue', colors: ['#0a0a2e', '#2980b9'] },
+      { id: 'burgundy', name: 'Burgundy', colors: ['#200010', '#8e1a3b'] },
+      { id: 'golden', name: 'Golden', colors: ['#1a1400', '#d4ac0d'] },
+      { id: 'teal', name: 'Teal', colors: ['#001a1f', '#17a589'] },
+    ];
+    grid.innerHTML = '';
+    temas.forEach(function(t) {
+      var btn = document.createElement('button');
+      btn.className = 'pos-btn';
+      btn.style.background = 'linear-gradient(135deg, ' + t.colors[0] + ', ' + t.colors[1] + ')';
+      btn.style.color = '#fff';
+      btn.textContent = t.name;
+      btn.onclick = function() { ControlPanel.applyTheme(t.id); };
+      grid.appendChild(btn);
+    });
+  }
+
+  function renderCustomThemeUI() {
+    var list = document.getElementById('custom-theme-list');
+    if (!list) return;
+    var elements = [
+      { key: 'topbar', label: 'Top Bar', var: '--topbar-bg' },
+      { key: 'cards', label: 'Card Waktu', var: '--cards-bg' },
+      { key: 'active', label: 'Card Aktif', var: '--card-active-bg' },
+      { key: 'banner', label: 'Banner', var: '--banner-bg' },
+      { key: 'rt', label: 'Running Text', var: '--rt-text' },
+      { key: 'popup', label: 'Popup BG', var: '--popup-bg' },
+      { key: 'modal', label: 'Modal BG', var: '--modal-bg' },
+    ];
+    var swatches = [
+      'rgba(0,0,0,.6)', 'rgba(0,0,0,.85)', 'rgba(0,30,20,.75)', 'rgba(0,0,60,.72)',
+      'rgba(40,0,20,.75)', 'rgba(30,20,0,.8)', 'rgba(0,25,30,.78)', 'rgba(30,35,45,.82)',
+      '#F5A623', '#C0392B', '#27ae60', '#2980b9', '#8e1a3b', '#d4ac0d', '#17a589', '#5d6d7e'
+    ];
+    list.innerHTML = '';
+    elements.forEach(function(elem) {
+      var div = document.createElement('div');
+      div.style.cssText = 'margin-bottom:8px';
+      var label = document.createElement('label');
+      label.style.cssText = 'font-size:.75rem;color:#888;display:block;margin-bottom:4px';
+      label.textContent = elem.label;
+      div.appendChild(label);
+      var swatchDiv = document.createElement('div');
+      swatchDiv.className = 'swatch-grid';
+      swatches.forEach(function(c) {
+        var sw = document.createElement('div');
+        sw.className = 'swatch';
+        sw.style.background = c;
+        sw.onclick = function() { ControlPanel.applyCustomColor(elem.var, c); };
+        swatchDiv.appendChild(sw);
+      });
+      div.appendChild(swatchDiv);
+      list.appendChild(div);
+    });
+  }
+
+  function renderRibbonTemaUI() {
+    var grid = document.getElementById('ribbon-tema-grid');
+    if (!grid) return;
+    var temas = [
+      { bg: 'linear-gradient(135deg,#1a1a2e 0%,#c0392b 100%)' },
+      { bg: 'linear-gradient(135deg,#0d1f1a 0%,#27ae60 100%)' },
+      { bg: 'linear-gradient(135deg,#0a0a2e 0%,#2980b9 100%)' },
+      { bg: 'linear-gradient(135deg,#1a1400 0%,#d4ac0d 100%)' },
+      { bg: 'linear-gradient(135deg,#1a0020 0%,#8e44ad 100%)' },
+      { bg: 'linear-gradient(135deg,#001a1f 0%,#17a589 100%)' },
+    ];
+    grid.innerHTML = '';
+    temas.forEach(function(t, idx) {
+      var btn = document.createElement('button');
+      btn.style.cssText = 'width:28px;height:28px;border-radius:6px;border:2px solid transparent;cursor:pointer;background:' + t.bg;
+      btn.onclick = function() { ControlPanel.applyRibbonTema(idx); };
+      grid.appendChild(btn);
+    });
+  }
+
+  function renderAudioList(type, items) {
+    var container = document.getElementById(type + '-items');
+    if (!container) return;
+    if (!items || !items.length) {
+      container.innerHTML = '<p style="color:#666;font-size:.75rem">Belum ada audio.</p>';
+      return;
+    }
+    var html = '';
+    items.forEach(function(a) {
+      html += `
+        <div class="audio-item">
+          <span class="name">${a.name || 'Audio'}</span>
+          <span class="badge">${a.id}</span>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderMuadzinList(items) {
+    var container = document.getElementById('muadzin-list');
+    if (!container) return;
+    if (!items || !items.length) {
+      container.innerHTML = '<p style="color:#666;font-size:.75rem">Belum ada audio adzan.</p>';
+      return;
+    }
+    var html = '';
+    items.forEach(function(a) {
+      var active = a.id === ControlPanel._activeAdzanId;
+      html += `
+        <div class="audio-item" style="${active ? 'border-color:#f0a500;background:rgba(240,165,0,.1)' : ''}" onclick="ControlPanel.setActiveAdzan('${a.id}')">
+          <span class="name">${a.name || 'Audio'}</span>
+          <span class="badge">${active ? '✅ Aktif' : ''}</span>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderEvents(events) {
+    var container = document.getElementById('event-list');
+    if (!container) return;
+    if (!events || !events.length) {
+      container.innerHTML = '<p style="color:#666;font-size:.75rem">Belum ada hari besar.</p>';
+      return;
+    }
+    var html = '';
+    events.forEach(function(ev, idx) {
+      html += `
+        <div class="event-item">
+          <div class="info">
+            <div class="name">${ev.name}</div>
+            <div class="date">${ev.hDay || '?'} ${['Muharram','Shafar',"Rabi'ul Awal","Rabi'ul Akhir",'Jumadil Awal','Jumadil Akhir','Rajab',"Sya'ban",'Ramadhan','Syawal','Dzulqa\'dah','Dzulhijjah'][(ev.hMonth||1)-1] || ''}</div>
+          </div>
+          <button class="btn-danger" style="padding:2px 8px;font-size:.7rem" onclick="ControlPanel.deleteEvent(${idx})">✕</button>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  // ==================== LOAD INITIAL DATA ====================
+  function loadInitialData() {
+    // City dropdown
+    var sel = document.getElementById('input-city-api');
+    if (sel) {
+      var cities = Object.keys(window.CITY_COORDS || {}).sort();
+      cities.forEach(function(c) {
+        var opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+    }
+    
+    renderTemaUI();
+    renderCustomThemeUI();
+    renderRibbonTemaUI();
+    
+    // Load from settings
+    deviceDocRef.get().then(function(snap) {
+      if (!snap.exists) return;
+      var settings = snap.data().settings || {};
+      
+      // Masjid
+      if (settings.masjidName) {
+        var mn = document.getElementById('input-masjid-name');
+        if (mn) mn.value = settings.masjidName;
+      }
+      if (settings.masjidLocation) {
+        var ml = document.getElementById('input-masjid-location');
+        if (ml) ml.value = settings.masjidLocation;
+      }
+      if (settings.cityApi) {
+        var ca = document.getElementById('input-city-api');
+        if (ca) ca.value = settings.cityApi;
+      }
+      
+      // Events
+      if (settings.islamicEvents) {
+        renderEvents(settings.islamicEvents);
+      }
+      
+      // Muadzin
+      if (settings.activeAdzanId) {
+        ControlPanel._activeAdzanId = settings.activeAdzanId;
+      }
+    });
+  }
+
+  // ==================== CONTROL PANEL API ====================
   window.ControlPanel = {
-    setPos: function (pos) {
+    _activeAdzanId: null,
+    _sleepSets: [{ id: 1, offH: '20', offM: '00', onH: '03', onM: '30' }],
+    _prayerKey: 'Shubuh',
+    _prayerOffset: 0,
+
+    // ===== Layout & Popup =====
+    setTemplate: function(name) {
+      pushSetting('template', name);
+      ['default', 'cardkiri', 'cardatas'].forEach(function(t) {
+        var el = document.getElementById('tpl-' + t);
+        if (el) el.classList.toggle('active', t === name);
+      });
+      var lbl = document.getElementById('tpl-active-label');
+      if (lbl) {
+        var names = { default: 'Default', cardkiri: 'Card Kiri', cardatas: 'Card Atas' };
+        lbl.textContent = 'Aktif: ' + (names[name] || name);
+      }
+      toast('Template: ' + (names[name] || name) + ' ✓');
+    },
+
+    setPos: function(pos) {
       setActivePosButton(pos);
       pushSetting('popupPosition', pos);
     },
-    previewScale: function (val) { setSliderValue('popup-scale', val); },
-    commitScale: function (val) { pushSetting('popupScale', val); },
-    previewFont: function (val) { setSliderValue('font-scale', val); },
-    commitFont: function (val) { pushSetting('globalFontScale', val); },
+
+    previewScale: function(val) {
+      setSliderValue('popup-scale', val);
+    },
+
+    commitScale: function(val) {
+      pushSetting('popupScale', val);
+      toast('Ukuran popup: ' + val + '% ✓');
+    },
+
+    previewFont: function(val) {
+      setSliderValue('font-scale', val);
+    },
+
+    commitFont: function(val) {
+      pushSetting('globalFontScale', val);
+      toast('Ukuran font: ' + val + '% ✓');
+    },
+
+    previewPopup: function() {
+      toast('👁 Pratinjau popup dikirim ke TV');
+      pushSetting('previewPopup', true);
+      setTimeout(function() { pushSetting('previewPopup', false); }, 100);
+    },
+
+    // ===== Masjid =====
+    saveMasjid: function() {
+      var name = document.getElementById('input-masjid-name').value.trim();
+      var loc = document.getElementById('input-masjid-location').value.trim();
+      var city = document.getElementById('input-city-api').value;
+      if (name) pushSetting('masjidName', name);
+      if (loc) pushSetting('masjidLocation', loc);
+      if (city) pushSetting('cityApi', city);
+      toast('Pengaturan masjid disimpan ✓');
+    },
+
+    // ===== Running Text =====
+    saveRunningText: function() {
+      var text = document.getElementById('rt-text').value.trim();
+      var speed = document.getElementById('rt-speed').value;
+      if (text) pushSetting('runningText', text);
+      pushSetting('runningTextSpeed', parseInt(speed, 10));
+      toast('Running text disimpan ✓');
+    },
+
+    // ===== Background =====
+    addBackgrounds: function(input) {
+      var files = input.files;
+      if (!files || !files.length) return;
+      // Kirim data URL ke TV
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = e.target.result;
+        pushSetting('bgUpload', { dataUrl: data, name: files[0].name });
+        toast('Background diupload ✓');
+      };
+      reader.readAsDataURL(files[0]);
+      input.value = '';
+    },
+
+    saveBgSettings: function() {
+      var speed = document.getElementById('bg-speed').value;
+      var mode = document.getElementById('bg-transition').value;
+      pushSetting('bgSettings', { speed: parseInt(speed, 10), mode: mode });
+      toast('Background settings disimpan ✓');
+    },
+
+    // ===== Audio =====
+    addSettingsAudio: function(type, input) {
+      var files = input.files;
+      if (!files || !files.length) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = e.target.result;
+        var key = 'audioUpload_' + type;
+        pushSetting(key, { dataUrl: data, name: files[0].name });
+        toast('Audio ' + type + ' diupload ✓');
+      };
+      reader.readAsDataURL(files[0]);
+      input.value = '';
+    },
+
+    setVolume: function(type, val) {
+      pushSetting('audioVolume_' + type, parseInt(val, 10));
+      setSliderValue('vol-' + type, val);
+    },
+
+    toggleMute: function() {
+      pushSetting('muteAll', !this._muteState);
+      this._muteState = !this._muteState;
+      toast(this._muteState ? '🔇 Mute aktif' : '🔊 Unmute');
+    },
+    _muteState: false,
+
+    // ===== Papan Info =====
+    togglePapan: function(checked) {
+      pushSetting('papanEnabled', checked);
+    },
+
+    savePapan: function() {
+      var title = document.getElementById('papan-title').value.trim();
+      var desc = document.getElementById('papan-desc').value.trim();
+      var cb = document.getElementById('toggle-papan');
+      pushSetting('papanInfo', { enabled: !!cb.checked, title: title, desc: desc });
+      toast('Papan info disimpan ✓');
+    },
+
+    // ===== Kajian =====
+    toggleKajian: function(checked) {
+      pushSetting('kajianEnabled', checked);
+    },
+
+    toggleHideCards: function(checked) {
+      pushSetting('hideCards', checked);
+    },
+
+    setKajianContent: function(type, input) {
+      var file = input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = e.target.result;
+        pushSetting('kajianContent', { type: type, dataUrl: data, name: file.name });
+        toast('Kajian ' + type + ' diupload ✓');
+      };
+      reader.readAsDataURL(file);
+      input.value = '';
+    },
+
+    applyKajianUrl: function() {
+      var url = document.getElementById('kajian-url').value.trim();
+      if (url) {
+        pushSetting('kajianUrl', url);
+        toast('URL kajian diterapkan ✓');
+      }
+    },
+
+    saveKajian: function() {
+      var pemateri = document.getElementById('kajian-pemateri').value.trim();
+      var delay = document.getElementById('kajian-delay').value;
+      var duration = document.getElementById('kajian-duration').value;
+      var fontSize = document.getElementById('ribbon-font-size').value;
+      var cb = document.getElementById('toggle-kajian');
+      pushSetting('kajian', {
+        enabled: !!cb.checked,
+        pemateri: pemateri,
+        delay: parseInt(delay, 10),
+        duration: parseInt(duration, 10),
+        ribbonFontSize: parseInt(fontSize, 10)
+      });
+      toast('Kajian disimpan ✓');
+    },
+
+    previewRibbonFont: function(val) {
+      setSliderValue('ribbon-font-size', val);
+    },
+
+    applyRibbonTema: function(idx) {
+      pushSetting('kajianRibbonTema', idx);
+      var btns = document.querySelectorAll('#ribbon-tema-grid button');
+      btns.forEach(function(b, i) {
+        b.style.borderColor = i === idx ? '#fff' : 'transparent';
+      });
+    },
+
+    // ===== Live Camera =====
+    startCamera: function() {
+      var cams = [];
+      for (var i = 1; i <= 4; i++) {
+        var sel = document.getElementById('camera-' + i);
+        if (sel && sel.value) cams.push({ slot: i, deviceId: sel.value });
+      }
+      pushSetting('cameraConfig', { cameras: cams, action: 'start' });
+      toast('Memulai kamera...');
+    },
+
+    switchCamera: function(n) {
+      pushSetting('cameraSwitch', n);
+    },
+
+    toggleRekam: function() {
+      this._rekamState = !this._rekamState;
+      pushSetting('cameraRecord', this._rekamState);
+      toast(this._rekamState ? '⏺ Merekam...' : '⏹ Rekam berhenti');
+    },
+
+    // ===== Donasi =====
+    toggleDonasi: function(checked) {
+      pushSetting('donasiEnabled', checked);
+    },
+
+    saveDonasi: function() {
+      var judul = document.getElementById('donasi-judul').value.trim();
+      var desc = document.getElementById('donasi-desc').value.trim();
+      var input = document.getElementById('donasi-qr');
+      var cb = document.getElementById('toggle-donasi');
+      
+      var save = function(qr) {
+        pushSetting('donasi', {
+          enabled: !!cb.checked,
+          judul: judul,
+          desc: desc,
+          qr: qr || null
+        });
+        toast('Donasi disimpan ✓');
+      };
+      
+      if (input && input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          save(e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+        input.value = '';
+      } else {
+        save(null);
+      }
+    },
+
+    // ===== Tema =====
+    applyTheme: function(id) {
+      pushSetting('theme', id);
+      toast('Tema diterapkan ✓');
+    },
+
+    applyCustomColor: function(varName, color) {
+      pushSetting('customColor_' + varName, color);
+    },
+
+    // ===== Sleep Mode =====
+    toggleSleep: function(checked) {
+      pushSetting('sleepEnabled', checked);
+    },
+
+    addSleepSet: function() {
+      var sets = this._sleepSets;
+      var maxId = 0;
+      sets.forEach(function(s) { if (s.id > maxId) maxId = s.id; });
+      sets.push({ id: maxId + 1, offH: '20', offM: '00', onH: '03', onM: '30' });
+      renderSleepSets(sets);
+    },
+
+    removeSleepSet: function(id) {
+      var sets = this._sleepSets;
+      if (sets.length <= 1) return;
+      this._sleepSets = sets.filter(function(s) { return s.id !== id; });
+      renderSleepSets(this._sleepSets);
+    },
+
+    saveSleep: function() {
+      var cb = document.getElementById('sm-toggle');
+      var sets = this._sleepSets;
+      
+      // Collect current values from UI
+      var newSets = [];
+      var container = document.getElementById('sm-sets-container');
+      if (container) {
+        var items = container.querySelectorAll('.sm-set');
+        items.forEach(function(item, idx) {
+          var id = this._sleepSets[idx] ? this._sleepSets[idx].id : (idx + 1);
+          var offH = document.getElementById('sm-off-h-' + id);
+          var offM = document.getElementById('sm-off-m-' + id);
+          var onH = document.getElementById('sm-on-h-' + id);
+          var onM = document.getElementById('sm-on-m-' + id);
+          newSets.push({
+            id: id,
+            offH: offH ? String(offH.value || '20').padStart(2, '0') : '20',
+            offM: offM ? String(offM.value || '00').padStart(2, '0') : '00',
+            onH: onH ? String(onH.value || '03').padStart(2, '0') : '03',
+            onM: onM ? String(onM.value || '30').padStart(2, '0') : '30'
+          });
+        }, this);
+      }
+      this._sleepSets = newSets;
+      pushSetting('sleepMode', { enabled: !!cb.checked, sets: newSets });
+      toast('Sleep mode disimpan ✓');
+    },
+
+    // ===== Events =====
+    saveEvent: function() {
+      var name = document.getElementById('event-name').value.trim();
+      var month = parseInt(document.getElementById('event-month').value) || 1;
+      var day = parseInt(document.getElementById('event-day').value) || 1;
+      if (!name) { toast('Nama acara wajib diisi'); return; }
+      var events = this._events || [];
+      events.push({ name: name, hMonth: month, hDay: day });
+      this._events = events;
+      pushSetting('islamicEvents', events);
+      renderEvents(events);
+      document.getElementById('event-name').value = '';
+      document.getElementById('event-month').value = '';
+      document.getElementById('event-day').value = '';
+      toast('Hari besar ditambahkan ✓');
+    },
+    _events: [],
+
+    deleteEvent: function(idx) {
+      var events = this._events || [];
+      events.splice(idx, 1);
+      this._events = events;
+      pushSetting('islamicEvents', events);
+      renderEvents(events);
+    },
+
+    clearEventForm: function() {
+      document.getElementById('event-name').value = '';
+      document.getElementById('event-month').value = '';
+      document.getElementById('event-day').value = '';
+    },
+
+    // ===== Prayer Settings =====
+    loadPrayerSettings: function(key) {
+      this._prayerKey = key;
+      var st = this._prayerSettings && this._prayerSettings[key] ? this._prayerSettings[key] : {};
+      var countdown = st.countdownBefore !== undefined ? st.countdownBefore : 3;
+      var iqamah = st.iqamahDuration !== undefined ? st.iqamahDuration : 10;
+      var overlay = st.overlayDuration !== undefined ? st.overlayDuration : 15;
+      setSliderValue('p-countdown', countdown);
+      setSliderValue('p-iqamah', iqamah);
+      setSliderValue('p-overlay', overlay);
+      var offset = (this._prayerOffsets && this._prayerOffsets[key]) || 0;
+      document.getElementById('p-offset-val').textContent = offset;
+      this._prayerOffset = offset;
+    },
+
+    adjustOffset: function(val) {
+      var key = this._prayerKey;
+      var current = this._prayerOffset || 0;
+      if (val === 0) {
+        this._prayerOffset = 0;
+      } else {
+        this._prayerOffset = current + val;
+      }
+      document.getElementById('p-offset-val').textContent = this._prayerOffset;
+    },
+
+    savePrayerSettings: function() {
+      var key = this._prayerKey;
+      var countdown = parseInt(document.getElementById('p-countdown').value) || 0;
+      var iqamah = parseInt(document.getElementById('p-iqamah').value) || 0;
+      var overlay = parseInt(document.getElementById('p-overlay').value) || 0;
+      
+      var settings = this._prayerSettings || {};
+      settings[key] = {
+        countdownBefore: countdown,
+        iqamahDuration: iqamah,
+        overlayDuration: overlay
+      };
+      this._prayerSettings = settings;
+      pushSetting('prayerSettings', settings);
+      
+      var offsets = this._prayerOffsets || {};
+      offsets[key] = this._prayerOffset || 0;
+      this._prayerOffsets = offsets;
+      pushSetting('prayerOffsets', offsets);
+      
+      toast('Pengaturan ' + key + ' disimpan ✓');
+    },
+    _prayerSettings: {},
+    _prayerOffsets: {},
+
+    // ===== Muadzin =====
+    addMuadzinAudio: function(input) {
+      var files = input.files;
+      if (!files || !files.length) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var data = e.target.result;
+        pushSetting('muadzinAudio', { dataUrl: data, name: files[0].name });
+        toast('Audio adzan diupload ✓');
+      };
+      reader.readAsDataURL(files[0]);
+      input.value = '';
+    },
+
+    setActiveAdzan: function(id) {
+      this._activeAdzanId = id;
+      pushSetting('activeAdzanId', id);
+      toast('Audio adzan aktif ✓');
+    },
+
+    // ===== Toggles =====
+    toggleDhuha: function(checked) {
+      pushSetting('dhuhaEnabled', checked);
+    },
+
+    toggleModeJumat: function(checked) {
+      pushSetting('modeJumat', checked);
+    },
+
+    // ===== Connection =====
+    repair: function() {
+      localStorage.removeItem(LOCAL_KEY);
+      toast('🔗 Meminta koneksi ulang...');
+      setTimeout(function() { location.reload(); }, 500);
+    },
+
+    // ===== Collapsible =====
+    toggleCollapse: function(el) {
+      el.classList.toggle('open');
+      var content = el.nextElementSibling;
+      if (content) content.classList.toggle('open');
+    },
   };
 
+  // ==================== START ====================
   init();
 })();
 </script>
