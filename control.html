@@ -4,51 +4,167 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Kontrol Jam Adzan TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100vh;
-    background: #0f1115; color: #fff;
-    font-family: 'Poppins', -apple-system, sans-serif;
+  :root{
+    --bg:#0a0d13; --surface:#12161f; --surface-2:#191f2c; --surface-3:#202839;
+    --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.14);
+    --gold:#f0a500; --gold-soft:#ffd875; --teal:#22b8a0; --danger:#e5484d;
+    --text:#f2f4f8; --text-dim:#8891a3; --text-faint:#5c6478;
+    --radius:14px;
   }
-  .wrap { max-width: 480px; margin: 0 auto; padding: 20px 18px 60px; }
-  h1 { font-size: 1.15rem; margin: 6px 0 2px; text-align: center; }
-  .sub { text-align: center; color: #888; font-size: .78rem; margin-bottom: 22px; }
-  .card {
-    background: #1a1d24; border: 1px solid rgba(255,255,255,.06);
-    border-radius: 14px; padding: 18px; margin-bottom: 16px;
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;min-height:100vh;background:var(--bg);color:var(--text);
+    font-family:'Poppins',-apple-system,sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Cairo',sans-serif}
+  ::selection{background:var(--gold);color:#1a1200}
+
+  .arch-pattern{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(240,165,0,.10) 0, transparent 45%),
+      radial-gradient(circle at 85% 0%, rgba(34,184,160,.08) 0, transparent 40%),
+      linear-gradient(180deg,#141a26 0%, #0a0d13 100%);
   }
-  .card h2 { font-size: .88rem; margin: 0 0 4px; color: #f0a500; }
-  .card p.desc { font-size: .74rem; color: #888; margin: 0 0 12px; }
-  .pos-row { display: flex; gap: 8px; }
-  .pos-btn {
-    flex: 1; padding: 12px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
-    background: rgba(255,255,255,.06); color: #ddd; font-size: .82rem; font-weight: 600;
-    cursor: pointer; transition: background .15s, border-color .15s;
+  .arch-pattern::before{
+    content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(240,165,0,.045) 0 1px, transparent 1px 26px),
+      repeating-linear-gradient(-45deg, rgba(240,165,0,.045) 0 1px, transparent 1px 26px);
   }
-  .pos-btn.active { background: #f0a500; border-color: #f0a500; color: #111; }
-  .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-  input[type=range] { flex: 1; accent-color: #f0a500; height: 30px; }
-  .slider-val { min-width: 46px; text-align: right; font-size: .85rem; color: #f0a500; font-weight: 600; }
-  .status-screen {
-    min-height: 70vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 0 24px;
+  .arch-shape{
+    width:56px;height:64px;margin:0 auto 6px;position:relative;z-index:1;
+    background:linear-gradient(160deg,var(--gold) 0%,#c97d00 100%);
+    border-radius:50% 50% 6px 6px / 60% 60% 6px 6px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
   }
-  .status-screen .icon { font-size: 3rem; }
-  .status-screen p { color: #aaa; font-size: .9rem; line-height: 1.5; }
-  .btn-primary {
-    margin-top: 8px; padding: 11px 22px; border: none; border-radius: 10px;
-    background: #f0a500; color: #111; font-weight: 700; font-size: .85rem; cursor: pointer;
+
+  .wrap{max-width:480px;margin:0 auto;padding:0 0 60px}
+  .header{padding:26px 20px 20px;text-align:center;position:relative;z-index:1}
+  .header h1{font-size:1.28rem;margin:0 0 2px;font-weight:700;letter-spacing:.2px}
+  .header .sub{font-size:.78rem;color:var(--text-dim);display:flex;align-items:center;justify-content:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot.online{background:var(--teal)} .dot.offline{background:var(--text-faint)}
+
+  .content{padding:0 16px}
+
+  .sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+  .sec-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none}
+  .sec-ico{width:36px;height:36px;border-radius:10px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+  .sec-title{flex:1;font-weight:600;font-size:.92rem}
+  .sec-title small{display:block;font-weight:400;color:var(--text-dim);font-size:.72rem;margin-top:1px}
+  .sec-chev{color:var(--text-faint);transition:transform .2s;font-size:.8rem}
+  .sec.open .sec-chev{transform:rotate(180deg)}
+  .sec-body{display:none;padding:2px 16px 18px;border-top:1px solid var(--border)}
+  .sec.open .sec-body{display:block}
+
+  .field{margin-top:14px}
+  .field label{display:block;font-size:.76rem;color:var(--text-dim);margin-bottom:7px;font-weight:500}
+  input[type=text],input[type=number],textarea,select{
+    width:100%;background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);
+    border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.86rem;outline:none;
   }
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #262b36; color: #fff; padding: 10px 18px; border-radius: 10px;
-    font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999;
-  }
-  .toast.show { opacity: 1; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .dot.online { background: #3ecf6a; }
-  .dot.offline { background: #888; }
+  input[type=text]:focus,textarea:focus,select:focus{border-color:var(--gold)}
+  textarea{resize:vertical;min-height:64px;line-height:1.5}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238891a3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0}
+  .row + .row{border-top:1px solid var(--border)}
+  .row-label{font-size:.85rem;font-weight:500}
+  .row-label small{display:block;color:var(--text-dim);font-weight:400;font-size:.72rem;margin-top:1px}
+
+  .switch{position:relative;width:44px;height:26px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .switch .track{position:absolute;inset:0;background:var(--surface-3);border:1px solid var(--border-strong);border-radius:20px;transition:.2s}
+  .switch .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s}
+  .switch input:checked + .track{background:var(--gold);border-color:var(--gold)}
+  .switch input:checked + .track .knob{transform:translateX(18px)}
+
+  .slider-row{display:flex;align-items:center;gap:10px}
+  input[type=range]{flex:1;accent-color:var(--gold);height:30px}
+  .slider-val{min-width:44px;text-align:right;font-size:.82rem;color:var(--gold);font-weight:600}
+
+  .pos-row{display:flex;gap:8px;margin-top:6px}
+  .chip-btn{flex:1;padding:11px 6px;border-radius:10px;border:1px solid var(--border-strong);
+    background:var(--surface-2);color:var(--text-dim);font-size:.78rem;font-weight:600;cursor:pointer;text-align:center}
+  .chip-btn.active{background:var(--gold);border-color:var(--gold);color:#1a1200}
+
+  .btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface-2);
+    color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-sm{padding:6px 10px;font-size:.72rem;border-radius:8px}
+
+  .preview{margin-top:14px;background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:10px;padding:12px;overflow:hidden}
+  .preview-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.6px;color:var(--text-faint);margin-bottom:8px;font-weight:600}
+
+  .rt-preview{background:#000;border-radius:8px;padding:8px 0;overflow:hidden;white-space:nowrap}
+  .rt-preview span{display:inline-block;padding-left:100%;color:var(--gold-soft);font-size:.82rem;font-weight:500;animation:marquee 12s linear infinite}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+  .card-mock{background:linear-gradient(135deg,#1a1a2e 0%,#c0392b 55%);border-radius:10px;padding:14px;color:#fff}
+  .card-mock h4{margin:0 0 4px;font-size:.86rem;font-family:'Cairo',sans-serif}
+  .card-mock p{margin:0;font-size:.74rem;opacity:.85;line-height:1.4}
+
+  .ribbon-mock{border-radius:10px;padding:12px 14px;text-align:center;font-weight:700}
+
+  .theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px}
+  .theme-card{border-radius:10px;height:56px;display:flex;align-items:flex-end;padding:8px;font-size:.72rem;
+    font-weight:600;color:#fff;cursor:pointer;border:2px solid transparent;font-family:'Cairo',sans-serif}
+  .theme-card.active{border-color:#fff}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+  .swatch{height:34px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+  .swatch.active{border-color:#fff}
+
+  .tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+  .tpl-card{background:var(--surface-2);border:2px solid var(--border-strong);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+  .tpl-card.active{border-color:var(--gold)}
+  .tpl-mini{height:44px;background:var(--surface-3);border-radius:6px;margin-bottom:6px;position:relative;overflow:hidden}
+  .tpl-mini .bar{position:absolute;background:var(--gold)}
+  .tpl-card span{font-size:.68rem;color:var(--text-dim)}
+  .tpl-card.active span{color:var(--gold-soft)}
+
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .gallery-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--surface-3)}
+  .gallery-item img{width:100%;height:100%;object-fit:cover}
+  .gallery-item .rm{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;
+    background:rgba(0,0,0,.65);color:#fff;border:none;font-size:.7rem;display:flex;align-items:center;justify-content:center}
+  .gallery-add{border:1px dashed var(--border-strong);border-radius:8px;aspect-ratio:1;display:flex;
+    align-items:center;justify-content:center;font-size:1.3rem;color:var(--text-faint);cursor:pointer;background:var(--surface-2)}
+
+  .audio-item{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--surface-2);
+    border:1px solid var(--border);border-radius:9px;margin-top:8px}
+  .audio-item.active{border-color:var(--gold)}
+  .audio-item .nm{flex:1;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .audio-item .ic{width:26px;height:26px;border-radius:50%;background:var(--surface-3);border:none;color:var(--text);
+    display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+  .audio-item .ic.danger{color:var(--danger)}
+  .upload-label{display:block;text-align:center;padding:11px;border:1px dashed var(--border-strong);
+    border-radius:10px;color:var(--gold-soft);font-size:.8rem;font-weight:600;cursor:pointer;margin-top:12px}
+  .upload-label input{display:none}
+  .progress{height:4px;background:var(--surface-3);border-radius:4px;margin-top:8px;overflow:hidden;display:none}
+  .progress .bar{height:100%;background:var(--gold);width:0%;transition:width .2s}
+
+  .qr-box{display:flex;align-items:center;gap:12px;margin-top:12px}
+  .qr-box img{width:72px;height:72px;object-fit:cover;border-radius:8px;background:var(--surface-2)}
+  .qr-empty{width:72px;height:72px;border-radius:8px;background:var(--surface-2);border:1px dashed var(--border-strong);
+    display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--text-faint);flex-shrink:0}
+
+  hr.div{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+  .status-screen{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:14px;padding:0 30px;position:relative;z-index:1}
+  .status-screen h1{font-size:1.15rem}
+  .status-screen p{color:var(--text-dim);font-size:.85rem;line-height:1.55;max-width:300px}
+  .btn-primary{margin-top:6px;padding:12px 26px;border:none;border-radius:12px;background:var(--gold);
+    color:#1a1200;font-weight:700;font-size:.86rem;cursor:pointer;font-family:inherit}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--surface-3);
+    color:var(--text);padding:10px 18px;border-radius:10px;font-size:.8rem;opacity:0;transition:opacity .25s;
+    pointer-events:none;z-index:999;border:1px solid var(--border-strong);max-width:86vw;text-align:center}
+  .toast.show{opacity:1}
+
+  .footnote{text-align:center;color:var(--text-faint);font-size:.7rem;margin:18px 0 4px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -59,12 +175,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="cities.js"></script>
 <script>
 (function () {
   'use strict';
 
-  // ==================== KONFIGURASI ====================
-  // HARUS SAMA PERSIS dengan FIREBASE_CONFIG di firebase-sync.js (satu project Firebase yang sama)
   var FIREBASE_CONFIG = {
     apiKey: "AIzaSyAsgeM5Bh-imX7495mMJ1JJ-AkuyrzmA7c",
     authDomain: "mahallahtvpro.firebaseapp.com",
@@ -77,41 +193,43 @@
   var LOCAL_KEY = 'jamAdzan_pairedDeviceId';
 
   var root = document.getElementById('root');
-  var db, auth, myUid;
+  var db, auth, storage, myUid;
   var deviceId, pairingToken;
   var deviceDocRef, unsubDevice;
-  var applyingFromRemote = false;
+  var current = {};
+  var focusedField = null;
 
   function toast(msg) {
     var t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(function () { t.classList.remove('show'); }, 1800);
+    clearTimeout(t._to);
+    t._to = setTimeout(function () { t.classList.remove('show'); }, 1800);
   }
 
   function qs(name) {
     var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return m ? decodeURIComponent(m[1]) : null;
   }
+  function $(id) { return document.getElementById(id); }
 
-  // ==================== LAYAR STATUS (loading / error / pairing) ====================
   function renderStatus(icon, title, desc, showRetry) {
     root.innerHTML =
+      '<div class="arch-pattern" style="min-height:100vh">' +
       '<div class="status-screen">' +
-      '<div class="icon">' + icon + '</div>' +
+      '<div class="arch-shape">' + icon + '</div>' +
       '<h1>' + title + '</h1>' +
       '<p>' + desc + '</p>' +
-      (showRetry ? '<button class="btn-primary" onclick="location.reload()">Coba Lagi</button>' : '') +
-      '</div>';
+      (showRetry ? '<button class="btn-primary" onclick="location.reload()">Coba lagi</button>' : '') +
+      '</div></div>';
   }
 
-  // ==================== INISIALISASI ====================
   function init() {
     deviceId = qs('d') || localStorage.getItem(LOCAL_KEY);
     pairingToken = qs('t');
 
     if (!deviceId) {
-      renderStatus('📷', 'Belum Terhubung', 'Buka menu Pengaturan &gt; Template Layout di TV, lalu tekan tombol "Hubungkan HP" dan scan QR Code yang muncul.', false);
+      renderStatus('📷', 'Belum terhubung', 'Buka menu Pengaturan &gt; Kontrol Jarak Jauh di TV, lalu tekan "Hubungkan HP" dan scan QR Code yang muncul.', false);
       return;
     }
 
@@ -120,10 +238,11 @@
     try {
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     } catch (e) {
-      renderStatus('⚠️', 'Gagal Memuat', 'Terjadi kesalahan konfigurasi. Hubungi penyedia aplikasi.', true);
+      renderStatus('⚠️', 'Gagal memuat', 'Terjadi kesalahan konfigurasi. Hubungi penyedia aplikasi.', true);
       return;
     }
     db = firebase.firestore();
+    storage = firebase.storage();
     auth = firebase.auth();
     deviceDocRef = db.collection('devices').doc(deviceId);
 
@@ -133,15 +252,14 @@
       checkAccess();
     });
     auth.signInAnonymously().catch(function () {
-      renderStatus('⚠️', 'Gagal Terhubung', 'Tidak dapat menyambung ke server. Periksa koneksi internet HP Anda.', true);
+      renderStatus('⚠️', 'Gagal terhubung', 'Tidak dapat menyambung ke server. Periksa koneksi internet HP Anda.', true);
     });
   }
 
-  // ==================== CEK APAKAH HP INI SUDAH DIOTORISASI ====================
   function checkAccess() {
     deviceDocRef.get().then(function (snap) {
       if (!snap.exists) {
-        renderStatus('⚠️', 'TV Tidak Ditemukan', 'Kode perangkat tidak valid. Coba scan ulang QR dari TV.', false);
+        renderStatus('⚠️', 'TV tidak ditemukan', 'Kode perangkat tidak valid. Coba scan ulang QR dari TV.', false);
         return;
       }
       var data = snap.data();
@@ -152,27 +270,19 @@
       } else if (pairingToken) {
         requestPairing();
       } else {
-        renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
+        renderStatus('📷', 'Belum terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
       }
     }).catch(function () {
-      // Kemungkinan besar: Security Rules menolak baca karena memang belum diotorisasi.
-      if (pairingToken) {
-        requestPairing();
-      } else {
-        renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
-      }
+      if (pairingToken) requestPairing();
+      else renderStatus('📷', 'Belum terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
     });
   }
 
-  // ==================== KIRIM PERMINTAAN PAIRING ====================
   function requestPairing() {
     renderStatus('🔗', 'Menghubungkan ke TV...', 'Menunggu TV menyetujui permintaan ini.', false);
-
     var reqRef = deviceDocRef.collection('pairingRequests').doc(myUid);
     reqRef.set({
-      uid: myUid,
-      token: pairingToken,
-      status: 'pending',
+      uid: myUid, token: pairingToken, status: 'pending',
       requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
     }).then(function () {
       var unsub = reqRef.onSnapshot(function (snap) {
@@ -185,124 +295,475 @@
           startControlPanel();
         } else if (status === 'rejected') {
           unsub();
-          renderStatus('✖️', 'Kode Kedaluwarsa', 'QR Code sudah tidak berlaku. Minta TV menampilkan QR baru lalu scan ulang.', false);
+          renderStatus('✖️', 'Kode kedaluwarsa', 'QR Code sudah tidak berlaku. Minta TV menampilkan QR baru lalu scan ulang.', false);
         }
       });
       setTimeout(function () {
-        // Jika 60 detik tidak ada respon, kemungkinan TV offline/QR sudah tertutup.
         reqRef.get().then(function (snap) {
           if (snap.exists && snap.data().status === 'pending') {
             unsub();
-            renderStatus('⏱️', 'Waktu Habis', 'TV tidak merespon. Pastikan TV menyala &amp; terhubung internet, lalu scan ulang QR.', true);
+            renderStatus('⏱️', 'Waktu habis', 'TV tidak merespon. Pastikan TV menyala &amp; terhubung internet, lalu scan ulang QR.', true);
           }
         });
       }, 60000);
     }).catch(function (e) {
-      renderStatus('⚠️', 'Gagal Mengirim Permintaan', e.message, true);
+      renderStatus('⚠️', 'Gagal mengirim permintaan', e.message, true);
     });
   }
 
-  // ==================== PANEL KONTROL ====================
+  var RIBBON_TEMAS = [
+    { label: 'Default', bg: 'linear-gradient(135deg,#1a1a2e 0%,#c0392b 100%)' },
+    { label: 'Hijau', bg: 'linear-gradient(135deg,#0d1f1a 0%,#27ae60 100%)' },
+    { label: 'Biru', bg: 'linear-gradient(135deg,#0a0a2e 0%,#2980b9 100%)' },
+    { label: 'Emas', bg: 'linear-gradient(135deg,#1a1400 0%,#d4ac0d 100%)' },
+    { label: 'Ungu', bg: 'linear-gradient(135deg,#1a0020 0%,#8e44ad 100%)' },
+    { label: 'Teal', bg: 'linear-gradient(135deg,#001a1f 0%,#17a589 100%)' },
+    { label: 'Hitam', bg: 'linear-gradient(135deg,#111 0%,#333 100%)' },
+    { label: 'Putih', bg: 'linear-gradient(135deg,#eee 0%,#fff 100%)' },
+  ];
+  var THEMES = [
+    { id: 'default', name: 'Classic Dark', preview: ['#000', '#F5A623'] },
+    { id: 'emerald', name: 'Emerald Night', preview: ['#0d1f1a', '#27ae60'] },
+    { id: 'royal', name: 'Royal Blue', preview: ['#0a0a2e', '#2980b9'] },
+    { id: 'burgundy', name: 'Burgundy', preview: ['#200010', '#8e1a3b'] },
+    { id: 'golden', name: 'Golden Palace', preview: ['#1a1400', '#d4ac0d'] },
+    { id: 'teal', name: 'Teal Ocean', preview: ['#001a1f', '#17a589'] },
+    { id: 'slate', name: 'Slate Gray', preview: ['#1c2333', '#5d6d7e'] },
+    { id: 'copper', name: 'Copper Sunset', preview: ['#1f0a00', '#ca6f1e'] },
+  ];
+
   function startControlPanel() {
     root.innerHTML =
+      '<div class="arch-pattern">' +
       '<div class="wrap">' +
-      '<h1>🕌 Kontrol Jam Adzan TV</h1>' +
+      '<div class="header">' +
+      '<div class="arch-shape">🕌</div>' +
+      '<h1>Kontrol Jam Adzan</h1>' +
       '<p class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></p>' +
+      '</div>' +
+      '<div class="content" id="sections"></div>' +
+      '<p class="footnote">Perubahan tersimpan otomatis dan langsung tampil di TV.<br>File yang diunggah dari HP disimpan di Firebase Storage.</p>' +
+      '</div></div>';
 
-      '<div class="card">' +
-      '<h2>Posisi Popup Notifikasi</h2>' +
-      '<p class="desc">Berlaku untuk popup Menuju Waktu Adzan, Menunggu Iqamah, dan Luruskan Shaf.</p>' +
-      '<div class="pos-row">' +
-      '<button class="pos-btn" id="pos-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
-      '<button class="pos-btn" id="pos-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
-      '<button class="pos-btn" id="pos-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
-      '</div>' +
-      '</div>' +
-
-      '<div class="card">' +
-      '<h2>Ukuran Kotak Popup</h2>' +
-      '<p class="desc">Kotak &amp; huruf popup membesar/mengecil bersamaan.</p>' +
-      '<div class="slider-row">' +
-      '<input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)">' +
-      '<span class="slider-val" id="popup-scale-val">100%</span>' +
-      '</div>' +
-      '</div>' +
-
-      '<div class="card">' +
-      '<h2>Ukuran Font Universal</h2>' +
-      '<p class="desc">Membesarkan/mengecilkan seluruh teks di layar TV.</p>' +
-      '<div class="slider-row">' +
-      '<input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)">' +
-      '<span class="slider-val" id="font-scale-val">100%</span>' +
-      '</div>' +
-      '</div>' +
-
-      '<p class="sub" style="margin-top:24px">Perubahan tersimpan otomatis dan langsung tampil di TV.</p>' +
-      '</div>';
-
+    $('sections').innerHTML = buildSections();
+    bindStaticEvents();
     listenDeviceForUi();
+  }
+
+  function sec(id, icon, title, sub, bodyHtml) {
+    return '<div class="sec" id="sec-' + id + '">' +
+      '<div class="sec-head" onclick="ControlPanel.toggleSec(\'' + id + '\')">' +
+      '<div class="sec-ico">' + icon + '</div>' +
+      '<div class="sec-title">' + title + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
+      '<div class="sec-chev">▾</div></div>' +
+      '<div class="sec-body">' + bodyHtml + '</div></div>';
+  }
+
+  function buildSections() {
+    var html = '';
+
+    html += sec('template', '🖥️', 'Template & Layout', 'Tata letak tampilan TV',
+      '<div class="tpl-grid" id="tpl-grid">' +
+      tplCard('default', 'Default') + tplCard('cardkiri', 'Card Kiri') + tplCard('cardatas', 'Card Atas') +
+      '</div>' +
+      '<hr class="div">' +
+      '<div class="field"><label>Posisi popup notifikasi</label>' +
+      '<div class="pos-row">' +
+      '<button class="chip-btn" id="pos-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
+      '<button class="chip-btn" id="pos-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
+      '<button class="chip-btn" id="pos-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
+      '</div></div>' +
+      '<div class="field"><label>Ukuran kotak popup</label>' +
+      '<div class="slider-row"><input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)"><span class="slider-val" id="popup-scale-val">100%</span></div></div>' +
+      '<div class="field"><label>Ukuran font universal</label>' +
+      '<div class="slider-row"><input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)"><span class="slider-val" id="font-scale-val">100%</span></div></div>'
+    );
+
+    html += sec('kartu', '🕋', 'Kartu Adzan', 'Tampilan kartu waktu shalat',
+      toggleRow('dhuhaEnabled', 'Tampilkan kartu Dhuha') +
+      toggleRow('modeJumat', "Mode Jum'at", 'Nonaktifkan Dzuhur otomatis tiap Jumat') +
+      toggleRow('hideCards', 'Sembunyikan kartu waktu', 'Kartu & running text disembunyikan')
+    );
+
+    html += sec('rt', '📝', 'Running Text', 'Teks berjalan di layar TV',
+      '<div class="field"><label>Isi teks</label><textarea id="f-runningText" onblur="ControlPanel.pushText(\'runningText\',this.value)"></textarea></div>' +
+      '<div class="field"><label>Kecepatan</label><div class="slider-row"><input type="range" id="f-runningTextSpeed" min="20" max="150" step="5" oninput="ControlPanel.previewLocal(\'runningTextSpeed\',this.value)" onchange="ControlPanel.pushNum(\'runningTextSpeed\',this.value)"><span class="slider-val" id="f-runningTextSpeed-val">60dtk</span></div></div>' +
+      '<div class="preview"><div class="preview-label">Pratinjau</div><div class="rt-preview"><span id="rt-preview-text">—</span></div></div>'
+    );
+
+    html += sec('masjid', '📍', 'Masjid & Lokasi', 'Nama masjid & kota untuk jadwal shalat',
+      '<div class="field"><label>Nama masjid</label><input type="text" id="f-masjidName" onblur="ControlPanel.pushText(\'masjidName\',this.value)"></div>' +
+      '<div class="field"><label>Alamat / lokasi</label><input type="text" id="f-masjidLocation" onblur="ControlPanel.pushText(\'masjidLocation\',this.value)"></div>' +
+      '<div class="field"><label>Kota (basis jadwal shalat)</label><select id="f-cityApi" onchange="ControlPanel.pushText(\'cityApi\',this.value)">' + cityOptions() + '</select></div>'
+    );
+
+    html += sec('bg', '🖼️', 'Background', 'Slideshow gambar latar TV',
+      '<div class="field"><label>Durasi per gambar (detik)</label><div class="slider-row"><input type="range" id="f-bgSpeed" min="3" max="60" step="1" oninput="ControlPanel.previewLocal(\'bgSpeed\',this.value)" onchange="ControlPanel.pushNum(\'bgSpeed\',this.value)"><span class="slider-val" id="f-bgSpeed-val">8dtk</span></div></div>' +
+      '<div class="field"><label>Transisi</label><select id="f-bgMode" onchange="ControlPanel.pushText(\'bgMode\',this.value)">' +
+      '<option value="fade">Fade</option><option value="slide">Slide</option><option value="zoom">Zoom</option></select></div>' +
+      '<div class="field"><label>Galeri background</label><div class="gallery" id="bg-gallery"></div>' +
+      '<label class="upload-label">⬆ Upload gambar baru<input type="file" accept="image/*" multiple onchange="ControlPanel.uploadBg(this)"></label>' +
+      '<div class="progress" id="bg-progress"><div class="bar"></div></div></div>'
+    );
+
+    html += sec('audio', '🔊', 'Audio', 'Volume & file suara adzan/alarm',
+      toggleRow('muteAll', 'Mute semua audio') +
+      '<hr class="div">' +
+      volumeRow('audioVolumePreAdzan', 'Volume sebelum adzan') +
+      volumeRow('audioVolumeAdzan', 'Volume adzan') +
+      volumeRow('audioVolumeAlarm', 'Volume alarm/iqamah') +
+      '<hr class="div">' +
+      audioBlock('preAdzan', 'Audio sebelum adzan', 'settingsAudiosPreAdzan', 'activeAudioPreAdzan') +
+      audioBlock('adzan', 'Audio adzan (mode muadzin)', 'muadzinAudios', 'activeAdzanId') +
+      audioBlock('alarm', 'Audio alarm', 'settingsAudiosAlarm', 'activeAudioAlarm')
+    );
+
+    html += sec('papan', '📋', 'Papan Informasi', 'Pengumuman di layar TV',
+      toggleRow('papanEnabled', 'Aktifkan papan informasi') +
+      '<div class="field"><label>Judul</label><input type="text" id="f-papanTitle" onblur="ControlPanel.pushText(\'papanTitle\',this.value)"></div>' +
+      '<div class="field"><label>Deskripsi</label><textarea id="f-papanDesc" onblur="ControlPanel.pushText(\'papanDesc\',this.value)"></textarea></div>' +
+      '<div class="preview" id="papan-preview"><div class="preview-label">Pratinjau</div><div class="card-mock"><h4 id="papan-preview-title">—</h4><p id="papan-preview-desc">—</p></div></div>'
+    );
+
+    html += sec('donasi', '💝', 'Donasi', 'Kotak QR donasi di layar TV',
+      toggleRow('donasiEnabled', 'Aktifkan kotak donasi') +
+      '<div class="field"><label>Judul</label><input type="text" id="f-donasiJudul" onblur="ControlPanel.pushText(\'donasiJudul\',this.value)"></div>' +
+      '<div class="field"><label>Deskripsi</label><textarea id="f-donasiDesc" onblur="ControlPanel.pushText(\'donasiDesc\',this.value)"></textarea></div>' +
+      '<div class="field"><label>QR Code</label><div class="qr-box"><div id="donasi-qr-wrap"><div class="qr-empty">QR</div></div>' +
+      '<label class="btn btn-sm" style="cursor:pointer">Ganti QR<input type="file" accept="image/*" style="display:none" onchange="ControlPanel.uploadDonasiQR(this)"></label></div>' +
+      '<div class="progress" id="donasi-progress"><div class="bar"></div></div></div>'
+    );
+
+    html += sec('kajian', '🎙️', 'Mode Kajian', 'Live/rekaman kajian & ribbon pemateri',
+      toggleRow('kajianEnabled', 'Aktifkan mode kajian') +
+      '<div class="field"><label>Nama pemateri</label><input type="text" id="f-kajianPemateri" onblur="ControlPanel.pushText(\'kajianPemateri\',this.value)"></div>' +
+      '<div class="field"><label>Muncul setelah (detik)</label><input type="number" id="f-kajianPemateriDelay" onblur="ControlPanel.pushNum(\'kajianPemateriDelay\',this.value)"></div>' +
+      '<div class="field"><label>Durasi tampil (detik)</label><input type="number" id="f-kajianPemateriDuration" onblur="ControlPanel.pushNum(\'kajianPemateriDuration\',this.value)"></div>' +
+      '<div class="field"><label>Tema ribbon</label><div class="swatch-grid" id="ribbon-grid"></div></div>' +
+      '<div class="field"><label>Ukuran font ribbon</label><div class="slider-row"><input type="range" id="f-kajianRibbonFontSize" min="12" max="32" step="1" oninput="ControlPanel.previewLocal(\'kajianRibbonFontSize\',this.value)" onchange="ControlPanel.pushNum(\'kajianRibbonFontSize\',this.value)"><span class="slider-val" id="f-kajianRibbonFontSize-val">17px</span></div></div>' +
+      '<div class="preview"><div class="preview-label">Pratinjau ribbon</div><div class="ribbon-mock" id="ribbon-preview">Nama Pemateri</div></div>' +
+      '<hr class="div">' +
+      '<div class="field"><label>URL video (YouTube / link langsung)</label><input type="text" id="f-kajianVideoUrl" placeholder="https://youtube.com/watch?v=..." onblur="ControlPanel.pushText(\'kajianVideoUrl\',this.value)"></div>' +
+      '<label class="upload-label">⬆ Upload gambar kajian<input type="file" accept="image/*" onchange="ControlPanel.uploadKajian(this,\'image\')"></label>' +
+      '<label class="upload-label">⬆ Upload video kajian<input type="file" accept="video/*" onchange="ControlPanel.uploadKajian(this,\'video\')"></label>' +
+      '<div class="progress" id="kajian-progress"><div class="bar"></div></div>'
+    );
+
+    html += sec('tema', '🎨', 'Tema Warna', 'Skema warna tampilan TV',
+      '<div class="theme-grid" id="theme-grid"></div>'
+    );
+
+    return html;
+  }
+
+  function tplCard(id, label) {
+    var bars = { default: '<div class="bar" style="top:0;left:0;right:0;height:8px"></div>',
+      cardkiri: '<div class="bar" style="top:0;left:0;bottom:0;width:8px"></div>',
+      cardatas: '<div class="bar" style="top:0;left:0;right:0;height:14px"></div>' }[id];
+    return '<div class="tpl-card" id="tpl-' + id + '" onclick="ControlPanel.setTemplate(\'' + id + '\')">' +
+      '<div class="tpl-mini">' + bars + '</div><span>' + label + '</span></div>';
+  }
+
+  function toggleRow(key, label, sub) {
+    return '<div class="row"><div class="row-label">' + label + (sub ? '<small>' + sub + '</small>' : '') + '</div>' +
+      '<label class="switch"><input type="checkbox" id="f-' + key + '" onchange="ControlPanel.pushBool(\'' + key + '\',this.checked)"><span class="track"><span class="knob"></span></span></label></div>';
+  }
+
+  function volumeRow(key, label) {
+    return '<div class="field"><label>' + label + '</label><div class="slider-row">' +
+      '<input type="range" id="f-' + key + '" min="0" max="100" step="5" oninput="ControlPanel.previewLocal(\'' + key + '\',this.value)" onchange="ControlPanel.pushNum(\'' + key + '\',this.value)">' +
+      '<span class="slider-val" id="f-' + key + '-val">100%</span></div></div>';
+  }
+
+  function audioBlock(uiKey, label, listKey, activeKey) {
+    return '<div class="field"><label>' + label + '</label><div id="audio-list-' + uiKey + '"></div>' +
+      '<label class="upload-label">⬆ Upload audio (MP3)<input type="file" accept="audio/*" multiple onchange="ControlPanel.uploadAudio(this,\'' + listKey + '\',\'' + activeKey + '\')"></label>' +
+      '<div class="progress" id="progress-' + uiKey + '"><div class="bar"></div></div></div>';
+  }
+
+  function cityOptions() {
+    var cities = Object.keys(CITY_COORDS).sort();
+    var html = '';
+    for (var i = 0; i < cities.length; i++) html += '<option value="' + cities[i] + '">' + cities[i] + '</option>';
+    return html;
+  }
+
+  function bindStaticEvents() {
+    var tg = $('theme-grid');
+    tg.innerHTML = '';
+    THEMES.forEach(function (t) {
+      var d = document.createElement('div');
+      d.className = 'theme-card';
+      d.id = 'theme-' + t.id;
+      d.style.background = 'linear-gradient(135deg,' + t.preview[0] + ' 0%,' + t.preview[1] + ' 100%)';
+      d.textContent = t.name;
+      d.onclick = function () { ControlPanel.pushText('currentTheme', t.id); };
+      tg.appendChild(d);
+    });
+
+    var rg = $('ribbon-grid');
+    rg.innerHTML = '';
+    RIBBON_TEMAS.forEach(function (t, idx) {
+      var d = document.createElement('div');
+      d.className = 'swatch';
+      d.id = 'ribbon-' + idx;
+      d.style.background = t.bg;
+      d.title = t.label;
+      d.onclick = function () { ControlPanel.pushNum('kajianRibbonTema', idx); };
+      rg.appendChild(d);
+    });
+
+    document.querySelectorAll('input[type=text],textarea').forEach(function (el) {
+      el.addEventListener('focus', function () { focusedField = el.id; });
+      el.addEventListener('blur', function () { focusedField = null; });
+    });
   }
 
   function listenDeviceForUi() {
     if (unsubDevice) unsubDevice();
     unsubDevice = deviceDocRef.onSnapshot(function (snap) {
       if (!snap.exists) return;
-      var settings = (snap.data() || {}).settings || {};
-      applyingFromRemote = true;
-      if (settings.popupPosition) setActivePosButton(settings.popupPosition);
-      if (settings.popupScale) setSliderValue('popup-scale', settings.popupScale);
-      if (settings.globalFontScale) setSliderValue('font-scale', settings.globalFontScale);
-      applyingFromRemote = false;
+      current = (snap.data() || {}).settings || {};
+      renderFromState();
       setConnState(true);
-    }, function () {
-      setConnState(false);
+    }, function () { setConnState(false); });
+  }
+
+  function renderFromState() {
+    var s = current;
+
+    ['default', 'cardkiri', 'cardatas'].forEach(function (t) {
+      var el = $('tpl-' + t); if (el) el.classList.toggle('active', (s.template || 'default') === t);
+    });
+    ['left', 'center', 'right'].forEach(function (p) {
+      var el = $('pos-' + p); if (el) el.classList.toggle('active', (s.popupPosition || 'right') === p);
+    });
+    setSlider('popup-scale', s.popupScale, '%', 100);
+    setSlider('font-scale', s.globalFontScale, '%', 100);
+
+    setCheck('dhuhaEnabled', s.dhuhaEnabled);
+    setCheck('modeJumat', s.modeJumat);
+    setCheck('hideCards', s.hideCards);
+
+    setInputIfIdle('f-runningText', s.runningText || '');
+    setSlider('f-runningTextSpeed', s.runningTextSpeed, 'dtk', 60);
+    var rtPrev = $('rt-preview-text'); if (rtPrev) rtPrev.textContent = s.runningText || '(Belum ada teks)';
+
+    setInputIfIdle('f-masjidName', s.masjidName || '');
+    setInputIfIdle('f-masjidLocation', s.masjidLocation || '');
+    if ($('f-cityApi') && s.cityApi) $('f-cityApi').value = s.cityApi;
+
+    setSlider('f-bgSpeed', s.bgSpeed, 'dtk', 8);
+    if ($('f-bgMode') && s.bgMode) $('f-bgMode').value = s.bgMode;
+    renderGallery(s.bgImages || []);
+
+    setCheck('muteAll', s.muteAll);
+    setSlider('f-audioVolumePreAdzan', s.audioVolumePreAdzan, '%', 100);
+    setSlider('f-audioVolumeAdzan', s.audioVolumeAdzan, '%', 100);
+    setSlider('f-audioVolumeAlarm', s.audioVolumeAlarm, '%', 100);
+    renderAudioList('preAdzan', s.settingsAudiosPreAdzan || [], s.activeAudioPreAdzan, 'settingsAudiosPreAdzan', 'activeAudioPreAdzan');
+    renderAudioList('adzan', s.muadzinAudios || [], s.activeAdzanId, 'muadzinAudios', 'activeAdzanId');
+    renderAudioList('alarm', s.settingsAudiosAlarm || [], s.activeAudioAlarm, 'settingsAudiosAlarm', 'activeAudioAlarm');
+
+    setCheck('papanEnabled', s.papanEnabled);
+    setInputIfIdle('f-papanTitle', s.papanTitle || '');
+    setInputIfIdle('f-papanDesc', s.papanDesc || '');
+    setText('papan-preview-title', s.papanTitle || '(Judul papan info)');
+    setText('papan-preview-desc', s.papanDesc || '(Deskripsi)');
+
+    setCheck('donasiEnabled', s.donasiEnabled);
+    setInputIfIdle('f-donasiJudul', s.donasiJudul || '');
+    setInputIfIdle('f-donasiDesc', s.donasiDesc || '');
+    renderDonasiQR(s.donasiQR && s.donasiQR.url);
+
+    setCheck('kajianEnabled', s.kajianEnabled);
+    setInputIfIdle('f-kajianPemateri', s.kajianPemateri || '');
+    setInputIfIdle('f-kajianPemateriDelay', s.kajianPemateriDelay != null ? s.kajianPemateriDelay : 5);
+    setInputIfIdle('f-kajianPemateriDuration', s.kajianPemateriDuration != null ? s.kajianPemateriDuration : 30);
+    setInputIfIdle('f-kajianVideoUrl', s.kajianVideoUrl || '');
+    setSlider('f-kajianRibbonFontSize', s.kajianRibbonFontSize, 'px', 17);
+    RIBBON_TEMAS.forEach(function (t, idx) {
+      var el = $('ribbon-' + idx); if (el) el.classList.toggle('active', (s.kajianRibbonTema || 0) === idx);
+    });
+    var rp = $('ribbon-preview');
+    if (rp) {
+      var tema = RIBBON_TEMAS[s.kajianRibbonTema || 0];
+      rp.style.background = tema.bg;
+      rp.style.color = (s.kajianRibbonTema === 7) ? '#222' : '#fff';
+      rp.style.fontSize = (s.kajianRibbonFontSize || 17) + 'px';
+      rp.textContent = s.kajianPemateri || 'Nama Pemateri';
+    }
+
+    THEMES.forEach(function (t) {
+      var el = $('theme-' + t.id); if (el) el.classList.toggle('active', (s.currentTheme || 'default') === t.id);
     });
   }
 
+  function setCheck(key, v) { var el = $('f-' + key); if (el) el.checked = !!v; }
+  function setText(id, v) { var el = $(id); if (el) el.textContent = v; }
+  function setInputIfIdle(id, v) { if (focusedField === id) return; var el = $(id); if (el && el.value !== String(v)) el.value = v; }
+  function setSlider(id, v, unit, dflt) {
+    var val = (v === undefined || v === null) ? dflt : v;
+    var el = $(id); if (el) el.value = val;
+    var lbl = $(id + '-val'); if (lbl) lbl.textContent = val + unit;
+  }
   function setConnState(online) {
-    var dot = document.getElementById('conn-dot');
-    var text = document.getElementById('conn-text');
+    var dot = $('conn-dot'), text = $('conn-text');
     if (!dot) return;
     dot.className = 'dot ' + (online ? 'online' : 'offline');
     text.textContent = online ? 'Terhubung' : 'Terputus, mencoba lagi...';
   }
 
-  function setActivePosButton(pos) {
-    ['left', 'center', 'right'].forEach(function (p) {
-      var el = document.getElementById('pos-' + p);
-      if (el) el.classList.toggle('active', p === pos);
+  function renderGallery(list) {
+    var g = $('bg-gallery'); if (!g) return;
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+      html += '<div class="gallery-item"><img src="' + list[i].url + '"><button class="rm" onclick="ControlPanel.removeItem(\'bgImages\',\'' + list[i].id + '\',\'' + (list[i].path || '') + '\')">✕</button></div>';
+    }
+    html += '<label class="gallery-add"><input type="file" accept="image/*" multiple style="display:none" onchange="ControlPanel.uploadBg(this)">+</label>';
+    g.innerHTML = html;
+  }
+
+  function renderAudioList(uiKey, list, activeId, listField, activeField) {
+    var box = $('audio-list-' + uiKey); if (!box) return;
+    if (list.length === 0) { box.innerHTML = '<p style="font-size:.74rem;color:var(--text-faint);margin:8px 0 0">Belum ada audio dari HP.</p>'; return; }
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+      var a = list[i];
+      var isActive = String(a.id) === String(activeId);
+      html += '<div class="audio-item' + (isActive ? ' active' : '') + '">' +
+        '<button class="ic" onclick="ControlPanel.playPreview(\'' + a.url + '\')">▶</button>' +
+        '<span class="nm">' + a.name + '</span>' +
+        (isActive ? '<span style="font-size:.65rem;color:var(--gold)">AKTIF</span>' : '<button class="ic" onclick="ControlPanel.setActive(\'' + activeField + '\',\'' + a.id + '\')">✓</button>') +
+        '<button class="ic danger" onclick="ControlPanel.removeItem(\'' + listField + '\',\'' + a.id + '\',\'' + (a.path || '') + '\')">✕</button>' +
+        '</div>';
+    }
+    box.innerHTML = html;
+  }
+
+  function renderDonasiQR(url) {
+    var wrap = $('donasi-qr-wrap'); if (!wrap) return;
+    wrap.innerHTML = url ? '<img src="' + url + '" alt="QR">' : '<div class="qr-empty">QR</div>';
+  }
+
+  var currentAudioPreview = null;
+
+  window.ControlPanel = {
+    toggleSec: function (id) {
+      var el = $('sec-' + id);
+      var willOpen = !el.classList.contains('open');
+      document.querySelectorAll('.sec.open').forEach(function (s) { s.classList.remove('open'); });
+      if (willOpen) el.classList.add('open');
+    },
+
+    pushBool: function (key, val) { pushSetting(key, !!val); },
+    pushText: function (key, val) { pushSetting(key, val); },
+    pushNum: function (key, val) {
+      var n = parseInt(val, 10) || 0;
+      var lbl = $('f-' + key + '-val'); if (lbl) { var unit = (lbl.textContent.match(/[a-z%]+$/i) || [''])[0]; lbl.textContent = n + unit; }
+      pushSetting(key, n);
+    },
+    previewLocal: function (key, val) {
+      var lbl = $('f-' + key + '-val'); if (lbl) { var unit = (lbl.textContent.match(/[a-z%]+$/i) || [''])[0]; lbl.textContent = val + unit; }
+      if (key === 'kajianRibbonFontSize') { var rp = $('ribbon-preview'); if (rp) rp.style.fontSize = val + 'px'; }
+    },
+
+    setTemplate: function (name) { pushSetting('template', name); },
+    setPos: function (pos) { pushSetting('popupPosition', pos); },
+    previewScale: function (v) { $('popup-scale-val').textContent = v + '%'; },
+    commitScale: function (v) { pushSetting('popupScale', parseInt(v, 10)); },
+    previewFont: function (v) { $('font-scale-val').textContent = v + '%'; },
+    commitFont: function (v) { pushSetting('globalFontScale', parseInt(v, 10)); },
+
+    setActive: function (field, id) { pushSetting(field, id); },
+
+    playPreview: function (url) {
+      if (currentAudioPreview) currentAudioPreview.pause();
+      var a = new Audio(url);
+      a.play().catch(function () {});
+      currentAudioPreview = a;
+      toast('▶ Memutar pratinjau audio');
+    },
+
+    removeItem: function (field, id, path) {
+      var list = (current[field] || []).filter(function (it) { return String(it.id) !== String(id); });
+      var patch = {}; patch['settings.' + field] = list; patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+      deviceDocRef.update(patch)
+        .then(function () { toast('Dihapus ✓'); if (path) storage.ref().child(path).delete().catch(function () {}); })
+        .catch(function (e) { toast('Gagal hapus: ' + e.message); });
+    },
+
+    uploadBg: function (input) { uploadMultiToList(input, 'backgrounds', 'bgImages'); },
+    uploadAudio: function (input, listField, activeField) {
+      uploadMultiToList(input, 'audio', listField).then(function (added) {
+        if (added && added.length && !current[activeField]) pushSetting(activeField, added[0].id);
+      });
+    },
+    uploadDonasiQR: function (input) {
+      var file = input.files[0]; if (!file) return;
+      showProgress('donasi-progress', true);
+      uploadFile(file, 'donasi', function (p) { setProgress('donasi-progress', p); }).then(function (res) {
+        showProgress('donasi-progress', false);
+        pushSetting('donasiQR', { id: res.id, url: res.url, name: res.name, path: res.path });
+        toast('QR donasi diperbarui ✓');
+      }).catch(function (e) { showProgress('donasi-progress', false); toast('Gagal upload: ' + e.message); });
+    },
+    uploadKajian: function (input, type) {
+      var file = input.files[0]; if (!file) return;
+      showProgress('kajian-progress', true);
+      uploadFile(file, 'kajian', function (p) { setProgress('kajian-progress', p); }).then(function (res) {
+        showProgress('kajian-progress', false);
+        pushSetting(type === 'image' ? 'kajianImage' : 'kajianVideo', { id: res.id, url: res.url, name: res.name, path: res.path });
+        toast((type === 'image' ? 'Gambar' : 'Video') + ' kajian diperbarui ✓');
+      }).catch(function (e) { showProgress('kajian-progress', false); toast('Gagal upload: ' + e.message); });
+    },
+  };
+
+  function uploadMultiToList(input, folder, field) {
+    var files = input.files; if (!files || !files.length) return Promise.resolve([]);
+    var progId = folder === 'backgrounds' ? 'bg-progress' : 'progress-' + (field.indexOf('PreAdzan') !== -1 ? 'preAdzan' : field.indexOf('Alarm') !== -1 ? 'alarm' : 'adzan');
+    showProgress(progId, true);
+    var uploads = [];
+    for (var i = 0; i < files.length; i++) uploads.push(uploadFile(files[i], folder, function (p) { setProgress(progId, p); }));
+    return Promise.all(uploads).then(function (results) {
+      showProgress(progId, false);
+      var newList = (current[field] || []).concat(results.map(function (r) { return { id: r.id, name: r.name, url: r.url, path: r.path }; }));
+      var patch = {}; patch['settings.' + field] = newList; patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+      return deviceDocRef.update(patch).then(function () {
+        toast(files.length + ' file diunggah ✓');
+        input.value = '';
+        return results;
+      });
+    }).catch(function (e) { showProgress(progId, false); toast('Gagal upload: ' + e.message); return []; });
+  }
+
+  function uploadFile(file, folder, onProgress) {
+    return new Promise(function (resolve, reject) {
+      var safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      var path = 'devices/' + deviceId + '/' + folder + '/' + Date.now() + '_' + safeName;
+      var ref = storage.ref().child(path);
+      var task = ref.put(file);
+      task.on('state_changed', function (snap) {
+        if (onProgress) onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100));
+      }, reject, function () {
+        task.snapshot.ref.getDownloadURL().then(function (url) {
+          resolve({ id: Date.now() + '_' + Math.floor(Math.random() * 1000), name: file.name, url: url, path: path });
+        }).catch(reject);
+      });
     });
   }
 
-  function setSliderValue(id, val) {
-    var el = document.getElementById(id);
-    var lbl = document.getElementById(id + '-val');
-    if (el) el.value = val;
-    if (lbl) lbl.textContent = val + '%';
-  }
+  function showProgress(id, show) { var p = $(id); if (p) { p.style.display = show ? 'block' : 'none'; setProgress(id, 0); } }
+  function setProgress(id, pct) { var b = document.querySelector('#' + id + ' .bar'); if (b) b.style.width = pct + '%'; }
 
   function pushSetting(key, value) {
-    if (applyingFromRemote) return;
+    if (!deviceDocRef) return;
     var patch = {};
-    patch['settings.' + key] = typeof value === 'string' ? value : parseInt(value, 10);
+    patch['settings.' + key] = value;
     patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
     patch.updatedBy = myUid;
-    deviceDocRef.update(patch).catch(function (e) {
-      toast('Gagal mengirim (offline?)');
-    });
+    deviceDocRef.update(patch).catch(function (e) { toast('Gagal mengirim (offline?)'); });
   }
-
-  // Dipakai oleh tombol/slider di HTML di atas
-  window.ControlPanel = {
-    setPos: function (pos) {
-      setActivePosButton(pos);
-      pushSetting('popupPosition', pos);
-    },
-    previewScale: function (val) { setSliderValue('popup-scale', val); },
-    commitScale: function (val) { pushSetting('popupScale', val); },
-    previewFont: function (val) { setSliderValue('font-scale', val); },
-    commitFont: function (val) { pushSetting('globalFontScale', val); },
-  };
 
   init();
 })();
