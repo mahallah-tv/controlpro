@@ -8,213 +8,47 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0; min-height: 100vh;
-    background: radial-gradient(1200px 800px at 50% -10%, #1c2130 0%, #0a0c11 55%, #060708 100%);
-    color: #fff; font-family: 'Poppins', -apple-system, 'Segoe UI', sans-serif;
-    -webkit-font-smoothing: antialiased;
+    background: #0f1115; color: #fff;
+    font-family: 'Poppins', -apple-system, sans-serif;
   }
-  .wrap { max-width: 480px; margin: 0 auto; padding: 16px 14px 70px; }
-
-  /* ---------- Header ---------- */
-  .header { text-align: center; padding: 10px 0 4px; }
-  .header h1 { font-size: 1.05rem; margin: 6px 0 2px; font-weight: 700; letter-spacing: .2px; }
-  .header .sub { color: #7d8494; font-size: .74rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; }
-  .dot.online { background: #3ecf6a; color: #3ecf6a; }
-  .dot.offline { background: #888; color: #888; }
-
-  /* ---------- Mini TV Preview ---------- */
-  .preview-shell {
-    position: sticky; top: 8px; z-index: 20; margin: 14px 0 18px;
-    background: linear-gradient(155deg, #1a1d2a, #111319);
-    border-radius: 20px; padding: 14px 14px 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.06);
-  }
-  .preview-label {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: .68rem; color: #7d8494; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px;
-  }
-  .preview-tv {
-    position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
-    background: #000; box-shadow: 0 0 0 3px #05060a, 0 0 0 4px rgba(255,255,255,.06);
-    transition: background .4s ease;
-  }
-  .prev-topbar {
-    position: absolute; top: 0; left: 0; right: 0; height: 15%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 6%; font-size: .5rem; color: #fff; opacity: .9; transition: background .4s ease;
-  }
-  .prev-topbar span { font-weight: 700; }
-  .prev-cards {
-    position: absolute; display: flex; gap: 2px; transition: all .35s ease;
-  }
-  .prev-card {
-    background: rgba(255,255,255,.14); border-radius: 3px; flex: 1;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .34rem; color: #fff; transition: background .3s ease;
-  }
-  .prev-card.active { background: var(--prev-active, #F5A623); color: #1a1400; font-weight: 700; }
-  .prev-popup {
-    position: absolute; top: 50%; background: rgba(10,10,25,.92);
-    border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
-    padding: 5px 9px; text-align: center; min-width: 26%;
-    transition: left .35s ease, right .35s ease, transform .35s ease;
-    box-shadow: 0 4px 14px rgba(0,0,0,.4);
-  }
-  .prev-popup .l1 { font-size: .32rem; color: #bbb; }
-  .prev-popup .l2 { font-size: .62rem; font-weight: 800; color: #fff; }
-  .prev-rt {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 9%;
-    background: rgba(0,0,0,.55); overflow: hidden; display: flex; align-items: center;
-  }
-  .prev-rt span {
-    display: inline-block; white-space: nowrap; font-size: .38rem; color: #FFD700;
-    padding-left: 100%; animation: prevmarquee linear infinite;
-  }
-  @keyframes prevmarquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-  .prev-papan {
-    position: absolute; top: 17%; left: 5%; right: 5%; background: rgba(20,20,30,.9);
-    border-radius: 5px; padding: 4px 6px; border-left: 2px solid #f0a500; display: none;
-  }
-  .prev-papan.show { display: block; }
-  .prev-papan .t { font-size: .38rem; font-weight: 700; color: #fff; }
-  .prev-papan .d { font-size: .3rem; color: #aaa; margin-top: 1px; }
-  .prev-donasi {
-    position: absolute; bottom: 12%; left: 4%; background: rgba(20,20,30,.92);
-    border-radius: 5px; padding: 3px 6px; display: none; font-size: .32rem; color: #ffd700; font-weight: 700;
-  }
-  .prev-donasi.show { display: block; }
-  .prev-ribbon {
-    position: absolute; bottom: 9%; left: 0; right: 0; padding: 3px 6px; display: none;
-    font-size: .34rem; font-weight: 700; text-align: center;
-  }
-  .prev-ribbon.show { display: block; }
-  .prev-font-tag {
-    position: absolute; top: 17%; right: 5%; font-size: .32rem; color: #7d8494; background: rgba(0,0,0,.4);
-    padding: 2px 5px; border-radius: 4px;
-  }
-
-  /* ---------- Accordion Cards ---------- */
+  .wrap { max-width: 480px; margin: 0 auto; padding: 20px 18px 60px; }
+  h1 { font-size: 1.15rem; margin: 6px 0 2px; text-align: center; }
+  .sub { text-align: center; color: #888; font-size: .78rem; margin-bottom: 22px; }
   .card {
-    background: linear-gradient(155deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 16px; margin-bottom: 10px; overflow: hidden;
-    backdrop-filter: blur(6px);
+    background: #1a1d24; border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px; padding: 18px; margin-bottom: 16px;
   }
-  .card-head {
-    display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer;
-    user-select: none;
-  }
-  .card-head .ic { font-size: 1.15rem; width: 26px; text-align: center; }
-  .card-head .ti { flex: 1; }
-  .card-head .ti h2 { margin: 0; font-size: .86rem; font-weight: 600; }
-  .card-head .ti p { margin: 1px 0 0; font-size: .68rem; color: #7d8494; }
-  .card-head .chev { font-size: .7rem; color: #7d8494; transition: transform .25s ease; }
-  .card.open .card-head .chev { transform: rotate(180deg); }
-  .card-body {
-    max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s ease;
-    padding: 0 16px;
-  }
-  .card.open .card-body { max-height: 900px; padding: 0 16px 16px; }
-
-  .row-toggle { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
-  .row-toggle span { font-size: .8rem; color: #dcdfe6; }
-  .switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider-toggle {
-    position: absolute; inset: 0; background: rgba(255,255,255,.14); border-radius: 24px;
-    transition: background .2s ease; cursor: pointer;
-  }
-  .slider-toggle:before {
-    content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
-    background: #fff; border-radius: 50%; transition: transform .2s ease;
-  }
-  input:checked + .slider-toggle { background: #f0a500; }
-  input:checked + .slider-toggle:before { transform: translateX(18px); }
-
-  label.field-label { display: block; font-size: .74rem; color: #9aa0ad; margin: 10px 0 6px; }
-  textarea, input[type=text], input[type=number] {
-    width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-    border-radius: 10px; padding: 10px 12px; color: #fff; font-family: inherit; font-size: .82rem;
-    outline: none; transition: border-color .2s ease;
-  }
-  textarea:focus, input[type=text]:focus, input[type=number]:focus { border-color: #f0a500; }
-  textarea { resize: vertical; min-height: 60px; }
-
-  select {
-    width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-    border-radius: 10px; padding: 10px 12px; color: #fff; font-family: inherit; font-size: .82rem;
-    outline: none; appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237d8494'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 14px center;
-  }
-
-  .pos-row { display: flex; gap: 8px; margin-top: 6px; }
+  .card h2 { font-size: .88rem; margin: 0 0 4px; color: #f0a500; }
+  .card p.desc { font-size: .74rem; color: #888; margin: 0 0 12px; }
+  .pos-row { display: flex; gap: 8px; }
   .pos-btn {
-    flex: 1; padding: 11px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.05); color: #ccc; font-size: .78rem; font-weight: 600;
-    cursor: pointer; transition: all .15s ease;
+    flex: 1; padding: 12px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06); color: #ddd; font-size: .82rem; font-weight: 600;
+    cursor: pointer; transition: background .15s, border-color .15s;
   }
-  .pos-btn.active { background: #f0a500; border-color: #f0a500; color: #14100a; }
-
+  .pos-btn.active { background: #f0a500; border-color: #f0a500; color: #111; }
   .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-  input[type=range] {
-    flex: 1; accent-color: #f0a500; height: 28px; background: transparent;
-  }
-  .slider-val { min-width: 48px; text-align: right; font-size: .8rem; color: #f0a500; font-weight: 700; }
-
-  .swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px; }
-  .swatch {
-    height: 42px; border-radius: 10px; cursor: pointer; position: relative;
-    border: 2px solid transparent; overflow: hidden;
-    display: flex; align-items: flex-end; justify-content: flex-start;
-  }
-  .swatch.active { border-color: #fff; box-shadow: 0 0 0 2px #f0a500; }
-  .swatch .name {
-    font-size: .48rem; color: #fff; background: rgba(0,0,0,.45); width: 100%; padding: 2px 4px;
-    text-align: center; font-weight: 600;
-  }
-
-  .ribbon-swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
-  .ribbon-swatch { height: 26px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
-  .ribbon-swatch.active { border-color: #fff; }
-
-  .btn-reset {
-    width: 100%; margin-top: 10px; padding: 10px; border-radius: 10px; border: none;
-    background: rgba(255,255,255,.08); color: #ccc; font-size: .78rem; font-weight: 600; cursor: pointer;
-  }
-
-  .vol-block { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
-  .vol-block .vic { width: 22px; text-align: center; font-size: .95rem; }
-  .vol-block .vlabel { font-size: .74rem; color: #9aa0ad; width: 64px; }
-
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: rgba(30,33,42,.95); color: #fff; padding: 10px 20px; border-radius: 30px;
-    font-size: .78rem; opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 999;
-    border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(8px);
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
-
+  input[type=range] { flex: 1; accent-color: #f0a500; height: 30px; }
+  .slider-val { min-width: 46px; text-align: right; font-size: .85rem; color: #f0a500; font-weight: 600; }
   .status-screen {
-    min-height: 88vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 0 26px;
+    min-height: 70vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 0 24px;
   }
-  .status-screen .icon { font-size: 3.2rem; }
-  .status-screen h1 { font-size: 1.05rem; margin: 0; }
-  .status-screen p { color: #9aa0ad; font-size: .85rem; line-height: 1.55; margin: 0; }
+  .status-screen .icon { font-size: 3rem; }
+  .status-screen p { color: #aaa; font-size: .9rem; line-height: 1.5; }
   .btn-primary {
-    margin-top: 6px; padding: 12px 26px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #f7b733, #dd8a00); color: #14100a; font-weight: 700;
-    font-size: .85rem; cursor: pointer; box-shadow: 0 6px 18px rgba(240,165,0,.35);
+    margin-top: 8px; padding: 11px 22px; border: none; border-radius: 10px;
+    background: #f0a500; color: #111; font-weight: 700; font-size: .85rem; cursor: pointer;
   }
-  .spinner {
-    width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(255,255,255,.15);
-    border-top-color: #f0a500; animation: spin 0.8s linear infinite;
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #262b36; color: #fff; padding: 10px 18px; border-radius: 10px;
+    font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .footer-note { text-align: center; color: #5b6172; font-size: .68rem; margin-top: 20px; line-height: 1.6; }
+  .toast.show { opacity: 1; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .dot.online { background: #3ecf6a; }
+  .dot.offline { background: #888; }
 </style>
 </head>
 <body>
@@ -242,57 +76,29 @@
 
   var LOCAL_KEY = 'jamAdzan_pairedDeviceId';
 
-  // Data tema (disalin dari app.js THEMES agar preview & swatch konsisten dengan TV)
-  var THEMES = [
-    { id: 'default', name: 'Classic Dark', topbar: '#141414', card: '#1c1c1c', active: '#F5A623', banner: '#C0392B', rt: '#FFD700' },
-    { id: 'emerald', name: 'Emerald Night', topbar: '#001e14', card: '#0d1f1a', active: '#27ae60', banner: '#16a085', rt: '#2ecc71' },
-    { id: 'royal', name: 'Royal Blue', topbar: '#00003c', card: '#0a0a2e', active: '#2980b9', banner: '#1a5276', rt: '#85c1e9' },
-    { id: 'burgundy', name: 'Burgundy', topbar: '#280014', card: '#200010', active: '#8e1a3b', banner: '#6c1427', rt: '#f1948a' },
-    { id: 'golden', name: 'Golden Palace', topbar: '#1e1400', card: '#1a1400', active: '#d4ac0d', banner: '#9a7d0a', rt: '#f9e79f' },
-    { id: 'teal', name: 'Teal Ocean', topbar: '#00191e', card: '#001a1f', active: '#17a589', banner: '#148f77', rt: '#76d7c4' },
-    { id: 'slate', name: 'Slate Gray', topbar: '#1e232d', card: '#1c2333', active: '#5d6d7e', banner: '#2e4057', rt: '#aab7b8' },
-    { id: 'copper', name: 'Copper Sunset', topbar: '#280f00', card: '#1f0a00', active: '#ca6f1e', banner: '#a04000', rt: '#f0b27a' },
-  ];
-  var RIBBON_COLORS = ['#0F3D5C','#8e1a3b','#16a085','#9a7d0a','#2980b9','#a04000','#5d6d7e','#6c1427'];
-
   var root = document.getElementById('root');
   var db, auth, myUid;
   var deviceId, pairingToken;
   var deviceDocRef, unsubDevice;
   var applyingFromRemote = false;
 
-  // Cermin state lokal untuk preview (bukan sumber kebenaran — sumber kebenaran tetap Firestore/TV)
-  var st = {
-    template: 'default', themeId: 'default',
-    dhuhaEnabled: false, modeJumat: true,
-    runningText: 'Selamat datang di Masjid kami.', runningTextSpeed: 60,
-    bgSpeed: 8, bgMode: 'fade',
-    muteAll: false, audioVolumePreAdzan: 100, audioVolumeAdzan: 100, audioVolumeAlarm: 100,
-    papanEnabled: false, papanTitle: '', papanDesc: '',
-    donasiEnabled: false, donasiJudul: '', donasiDesc: '',
-    kajianEnabled: false, hideCards: false, kajianPemateri: '', kajianPemateriDelay: 5,
-    kajianPemateriDuration: 30, kajianRibbonTema: 0, kajianRibbonFontSize: 17,
-    popupPosition: 'right', popupScale: 100, globalFontScale: 100,
-  };
-
   function toast(msg) {
     var t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    clearTimeout(toast._tm);
-    toast._tm = setTimeout(function () { t.classList.remove('show'); }, 1700);
+    setTimeout(function () { t.classList.remove('show'); }, 1800);
   }
 
-  function qsp(name) {
+  function qs(name) {
     var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return m ? decodeURIComponent(m[1]) : null;
   }
 
-  // ==================== LAYAR STATUS ====================
-  function renderStatus(iconHtml, title, desc, showRetry) {
+  // ==================== LAYAR STATUS (loading / error / pairing) ====================
+  function renderStatus(icon, title, desc, showRetry) {
     root.innerHTML =
       '<div class="status-screen">' +
-      '<div class="icon">' + iconHtml + '</div>' +
+      '<div class="icon">' + icon + '</div>' +
       '<h1>' + title + '</h1>' +
       '<p>' + desc + '</p>' +
       (showRetry ? '<button class="btn-primary" onclick="location.reload()">Coba Lagi</button>' : '') +
@@ -301,15 +107,15 @@
 
   // ==================== INISIALISASI ====================
   function init() {
-    deviceId = qsp('d') || localStorage.getItem(LOCAL_KEY);
-    pairingToken = qsp('t');
+    deviceId = qs('d') || localStorage.getItem(LOCAL_KEY);
+    pairingToken = qs('t');
 
     if (!deviceId) {
       renderStatus('📷', 'Belum Terhubung', 'Buka menu Pengaturan &gt; Template Layout di TV, lalu tekan tombol "Hubungkan HP" dan scan QR Code yang muncul.', false);
       return;
     }
 
-    renderStatus('<div class="spinner" style="margin:0 auto"></div>', 'Menghubungkan...', 'Menyambungkan ke TV, mohon tunggu sebentar.', false);
+    renderStatus('⏳', 'Menghubungkan...', 'Menyambungkan ke TV, mohon tunggu sebentar.', false);
 
     try {
       if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
@@ -331,6 +137,7 @@
     });
   }
 
+  // ==================== CEK APAKAH HP INI SUDAH DIOTORISASI ====================
   function checkAccess() {
     deviceDocRef.get().then(function (snap) {
       if (!snap.exists) {
@@ -348,17 +155,24 @@
         renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
       }
     }).catch(function () {
-      if (pairingToken) requestPairing();
-      else renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
+      // Kemungkinan besar: Security Rules menolak baca karena memang belum diotorisasi.
+      if (pairingToken) {
+        requestPairing();
+      } else {
+        renderStatus('📷', 'Belum Terhubung', 'HP ini belum diizinkan mengontrol TV tersebut. Scan ulang QR dari layar TV.', false);
+      }
     });
   }
 
+  // ==================== KIRIM PERMINTAAN PAIRING ====================
   function requestPairing() {
-    renderStatus('<div class="spinner" style="margin:0 auto"></div>', 'Menghubungkan ke TV...', 'Menunggu TV menyetujui permintaan ini.', false);
+    renderStatus('🔗', 'Menghubungkan ke TV...', 'Menunggu TV menyetujui permintaan ini.', false);
 
     var reqRef = deviceDocRef.collection('pairingRequests').doc(myUid);
     reqRef.set({
-      uid: myUid, token: pairingToken, status: 'pending',
+      uid: myUid,
+      token: pairingToken,
+      status: 'pending',
       requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
     }).then(function () {
       var unsub = reqRef.onSnapshot(function (snap) {
@@ -375,6 +189,7 @@
         }
       });
       setTimeout(function () {
+        // Jika 60 detik tidak ada respon, kemungkinan TV offline/QR sudah tertutup.
         reqRef.get().then(function (snap) {
           if (snap.exists && snap.data().status === 'pending') {
             unsub();
@@ -388,374 +203,60 @@
   }
 
   // ==================== PANEL KONTROL ====================
-  function themeOf(id) {
-    for (var i = 0; i < THEMES.length; i++) if (THEMES[i].id === id) return THEMES[i];
-    return THEMES[0];
-  }
-
-  function sec(icon, title, sub, id, bodyHtml, openDefault) {
-    return '<div class="card' + (openDefault ? ' open' : '') + '" id="card-' + id + '">' +
-      '<div class="card-head" onclick="ControlPanel.toggleCard(\'' + id + '\')">' +
-      '<div class="ic">' + icon + '</div>' +
-      '<div class="ti"><h2>' + title + '</h2><p>' + sub + '</p></div>' +
-      '<div class="chev">▾</div>' +
-      '</div>' +
-      '<div class="card-body">' + bodyHtml + '</div>' +
-      '</div>';
-  }
-
-  function toggleRow(label, id, checked, onchange) {
-    return '<div class="row-toggle"><span>' + label + '</span>' +
-      '<label class="switch"><input type="checkbox" id="' + id + '" ' + (checked ? 'checked' : '') + ' onchange="' + onchange + '"><span class="slider-toggle"></span></label>' +
-      '</div>';
-  }
-
-  function sliderRow(id, min, max, step, val, suffix, oninput, onchange) {
-    return '<div class="slider-row">' +
-      '<input type="range" id="' + id + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + val + '" ' +
-      'oninput="' + oninput + '" onchange="' + onchange + '">' +
-      '<span class="slider-val" id="' + id + '-val">' + val + suffix + '</span>' +
-      '</div>';
-  }
-
   function startControlPanel() {
     root.innerHTML =
       '<div class="wrap">' +
-
-      '<div class="header">' +
       '<h1>🕌 Kontrol Jam Adzan TV</h1>' +
-      '<div class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></div>' +
-      '</div>' +
+      '<p class="sub"><span class="dot online" id="conn-dot"></span><span id="conn-text">Terhubung</span></p>' +
 
-      '<div class="preview-shell">' +
-      '<div class="preview-label"><span>👁 Pratinjau Langsung</span><span id="preview-theme-name">Classic Dark</span></div>' +
-      '<div class="preview-tv" id="prev-tv">' +
-      '  <div class="prev-topbar" id="prev-topbar"><span>🕌 Masjid</span><span id="prev-clock">04:32</span></div>' +
-      '  <div class="prev-cards" id="prev-cards"></div>' +
-      '  <div class="prev-papan" id="prev-papan"><div class="t" id="prev-papan-t"></div><div class="d" id="prev-papan-d"></div></div>' +
-      '  <div class="prev-popup" id="prev-popup"><div class="l1">Menuju Waktu Adzan</div><div class="l2">Dzuhur · 05:00</div></div>' +
-      '  <div class="prev-ribbon" id="prev-ribbon"></div>' +
-      '  <div class="prev-donasi" id="prev-donasi">💳 Donasi</div>' +
-      '  <div class="prev-rt" id="prev-rt"><span id="prev-rt-text"></span></div>' +
+      '<div class="card">' +
+      '<h2>Posisi Popup Notifikasi</h2>' +
+      '<p class="desc">Berlaku untuk popup Menuju Waktu Adzan, Menunggu Iqamah, dan Luruskan Shaf.</p>' +
+      '<div class="pos-row">' +
+      '<button class="pos-btn" id="pos-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
+      '<button class="pos-btn" id="pos-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
+      '<button class="pos-btn" id="pos-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
       '</div>' +
       '</div>' +
 
-      sec('📐', 'Template &amp; Tema', 'Layout kartu dan warna tampilan', 'template',
-        '<label class="field-label">Layout Kartu Waktu Shalat</label>' +
-        '<div class="pos-row">' +
-        '<button class="pos-btn" id="tpl-default" onclick="ControlPanel.setTemplate(\'default\')">▦ Default</button>' +
-        '<button class="pos-btn" id="tpl-cardkiri" onclick="ControlPanel.setTemplate(\'cardkiri\')">◧ Kiri</button>' +
-        '<button class="pos-btn" id="tpl-cardatas" onclick="ControlPanel.setTemplate(\'cardatas\')">⬒ Atas</button>' +
-        '</div>' +
-        '<label class="field-label">Tema Warna</label>' +
-        '<div class="swatch-grid" id="theme-grid"></div>'
-        , true) +
+      '<div class="card">' +
+      '<h2>Ukuran Kotak Popup</h2>' +
+      '<p class="desc">Kotak &amp; huruf popup membesar/mengecil bersamaan.</p>' +
+      '<div class="slider-row">' +
+      '<input type="range" id="popup-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewScale(this.value)" onchange="ControlPanel.commitScale(this.value)">' +
+      '<span class="slider-val" id="popup-scale-val">100%</span>' +
+      '</div>' +
+      '</div>' +
 
-      sec('🕐', 'Kartu Adzan', 'Dhuha & Mode Jum\u2019at', 'kartu',
-        toggleRow('Tampilkan Dhuha', 'sw-dhuha', false, "ControlPanel.setDhuha(this.checked)") +
-        toggleRow('Mode Jum\u2019at', 'sw-jumat', true, "ControlPanel.setModeJumat(this.checked)")
-        , false) +
+      '<div class="card">' +
+      '<h2>Ukuran Font Universal</h2>' +
+      '<p class="desc">Membesarkan/mengecilkan seluruh teks di layar TV.</p>' +
+      '<div class="slider-row">' +
+      '<input type="range" id="font-scale" min="50" max="200" step="5" value="100" oninput="ControlPanel.previewFont(this.value)" onchange="ControlPanel.commitFont(this.value)">' +
+      '<span class="slider-val" id="font-scale-val">100%</span>' +
+      '</div>' +
+      '</div>' +
 
-      sec('📝', 'Running Text', 'Teks berjalan di layar TV', 'runningtext',
-        '<label class="field-label">Isi Teks</label>' +
-        '<textarea id="rt-text" oninput="ControlPanel.previewRunningText(this.value)" onchange="ControlPanel.setRunningText(this.value)"></textarea>' +
-        '<label class="field-label">Kecepatan</label>' +
-        sliderRow('rt-speed', 20, 200, 5, 60, 's', "ControlPanel.previewRtSpeed(this.value)", "ControlPanel.setRtSpeed(this.value)")
-        , false) +
-
-      sec('🖼️', 'Background', 'Kecepatan &amp; transisi slideshow', 'background',
-        '<label class="field-label">Durasi per Slide (detik)</label>' +
-        '<input type="number" id="bg-speed" min="2" max="120" value="8" onchange="ControlPanel.setBgSpeed(this.value)">' +
-        '<label class="field-label">Model Transisi</label>' +
-        '<select id="bg-mode" onchange="ControlPanel.setBgMode(this.value)">' +
-        '<option value="fade">Fade</option><option value="slide-left">Slide Kiri</option>' +
-        '<option value="slide-right">Slide Kanan</option><option value="zoom-in">Zoom In</option>' +
-        '<option value="zoom-out">Zoom Out</option><option value="flip">Flip</option>' +
-        '</select>' +
-        '<p style="font-size:.68rem;color:#5b6172;margin-top:10px">Unggah gambar background hanya bisa dilakukan langsung dari TV.</p>'
-        , false) +
-
-      sec('🔊', 'Audio', 'Volume &amp; mute', 'audio',
-        toggleRow('🔇 Mute Semua Audio', 'sw-mute', false, "ControlPanel.setMuteAll(this.checked)") +
-        '<div class="vol-block"><span class="vic">🎙️</span><span class="vlabel">Pre-Adzan</span>' + sliderRow('vol-pre', 0, 100, 1, 100, '%', "ControlPanel.previewVol('pre-adzan',this.value)", "ControlPanel.setVol('pre-adzan',this.value)") + '</div>' +
-        '<div class="vol-block"><span class="vic">📢</span><span class="vlabel">Adzan</span>' + sliderRow('vol-adzan', 0, 100, 1, 100, '%', "ControlPanel.previewVol('adzan',this.value)", "ControlPanel.setVol('adzan',this.value)") + '</div>' +
-        '<div class="vol-block"><span class="vic">⏰</span><span class="vlabel">Alarm</span>' + sliderRow('vol-alarm', 0, 100, 1, 100, '%', "ControlPanel.previewVol('alarm',this.value)", "ControlPanel.setVol('alarm',this.value)") + '</div>'
-        , false) +
-
-      sec('📋', 'Papan Informasi', 'Pengumuman di layar', 'papan',
-        toggleRow('Aktifkan Papan Info', 'sw-papan', false, "ControlPanel.setPapanEnabled(this.checked)") +
-        '<label class="field-label">Judul</label>' +
-        '<input type="text" id="papan-t" oninput="ControlPanel.previewPapan()" onchange="ControlPanel.setPapanTitle(this.value)">' +
-        '<label class="field-label">Deskripsi</label>' +
-        '<textarea id="papan-d" oninput="ControlPanel.previewPapan()" onchange="ControlPanel.setPapanDesc(this.value)"></textarea>'
-        , false) +
-
-      sec('🎓', 'Mode Kajian', 'Ribbon pemateri &amp; tampilan kajian', 'kajian',
-        toggleRow('Aktifkan Mode Kajian', 'sw-kajian', false, "ControlPanel.setKajianEnabled(this.checked)") +
-        toggleRow('Sembunyikan Card saat Kajian', 'sw-hidecards', false, "ControlPanel.setHideCards(this.checked)") +
-        '<label class="field-label">Nama Pemateri</label>' +
-        '<input type="text" id="kj-pemateri" placeholder="Ustadz ..." oninput="ControlPanel.previewRibbon()" onchange="ControlPanel.setKajianPemateri(this.value)">' +
-        '<label class="field-label">Muncul setelah (detik)</label>' +
-        '<input type="number" id="kj-delay" min="0" value="5" onchange="ControlPanel.setKajianDelay(this.value)">' +
-        '<label class="field-label">Tampil selama (detik)</label>' +
-        '<input type="number" id="kj-duration" min="5" value="30" onchange="ControlPanel.setKajianDuration(this.value)">' +
-        '<label class="field-label">Tema Warna Ribbon</label>' +
-        '<div class="ribbon-swatch-grid" id="ribbon-grid"></div>' +
-        '<label class="field-label">Ukuran Font Nama Pemateri</label>' +
-        sliderRow('kj-fontsize', 12, 48, 1, 17, 'px', "ControlPanel.previewRibbonFont(this.value)", "ControlPanel.setRibbonFont(this.value)") +
-        '<p style="font-size:.68rem;color:#5b6172;margin-top:10px">Unggah gambar/video/URL kajian hanya bisa dilakukan langsung dari TV.</p>'
-        , false) +
-
-      sec('💳', 'Donasi', 'Kotak donasi QRIS', 'donasi',
-        toggleRow('Aktifkan Donasi', 'sw-donasi', false, "ControlPanel.setDonasiEnabled(this.checked)") +
-        '<label class="field-label">Judul</label>' +
-        '<input type="text" id="dn-judul" placeholder="Donasi Pembangunan Masjid" onchange="ControlPanel.setDonasiJudul(this.value)">' +
-        '<label class="field-label">Deskripsi</label>' +
-        '<textarea id="dn-desc" placeholder="No. rekening / QRIS..." onchange="ControlPanel.setDonasiDesc(this.value)"></textarea>' +
-        '<p style="font-size:.68rem;color:#5b6172;margin-top:10px">Unggah gambar QR Code hanya bisa dilakukan langsung dari TV.</p>'
-        , false) +
-
-      sec('🔔', 'Notifikasi Popup', 'Posisi &amp; ukuran popup adzan/iqamah/shaf', 'popup',
-        '<label class="field-label">Posisi</label>' +
-        '<div class="pos-row">' +
-        '<button class="pos-btn" id="pp-left" onclick="ControlPanel.setPos(\'left\')">⬅ Kiri</button>' +
-        '<button class="pos-btn" id="pp-center" onclick="ControlPanel.setPos(\'center\')">⬍ Tengah</button>' +
-        '<button class="pos-btn" id="pp-right" onclick="ControlPanel.setPos(\'right\')">➡ Kanan</button>' +
-        '</div>' +
-        '<label class="field-label">Ukuran Kotak Popup</label>' +
-        sliderRow('pp-scale', 50, 200, 5, 100, '%', "ControlPanel.previewScale(this.value)", "ControlPanel.commitScale(this.value)")
-        , false) +
-
-      sec('🔠', 'Font Universal', 'Ukuran seluruh teks di TV', 'font',
-        sliderRow('font-scale', 50, 200, 5, 100, '%', "ControlPanel.previewFont(this.value)", "ControlPanel.commitFont(this.value)") +
-        '<button class="btn-reset" onclick="ControlPanel.commitFont(100)">↺ Kembalikan ke 100%</button>'
-        , false) +
-
-      '<p class="footer-note">Perubahan tersimpan otomatis dan langsung tampil di TV.<br>Beberapa fitur (unggah gambar/audio/video) hanya bisa diatur langsung dari TV.</p>' +
+      '<p class="sub" style="margin-top:24px">Perubahan tersimpan otomatis dan langsung tampil di TV.</p>' +
       '</div>';
 
-    buildThemeGrid();
-    buildRibbonGrid();
-    syncFormFields();
-    updateAllPreview();
-    updatePreviewClock();
     listenDeviceForUi();
   }
 
-  // ==================== BUILD GRID SWATCH ====================
-  function buildThemeGrid() {
-    var grid = document.getElementById('theme-grid');
-    grid.innerHTML = '';
-    THEMES.forEach(function (t) {
-      var el = document.createElement('div');
-      el.className = 'swatch';
-      el.id = 'theme-sw-' + t.id;
-      el.style.background = 'linear-gradient(135deg,' + t.card + ',' + t.active + ')';
-      el.innerHTML = '<div class="name">' + t.name + '</div>';
-      el.onclick = function () { ControlPanel.setTheme(t.id); };
-      grid.appendChild(el);
-    });
-  }
-
-  function buildRibbonGrid() {
-    var grid = document.getElementById('ribbon-grid');
-    grid.innerHTML = '';
-    RIBBON_COLORS.forEach(function (c, i) {
-      var el = document.createElement('div');
-      el.className = 'ribbon-swatch';
-      el.id = 'ribbon-sw-' + i;
-      el.style.background = c;
-      el.onclick = function () { ControlPanel.setRibbonTema(i); };
-      grid.appendChild(el);
-    });
-  }
-
-  // ==================== PREVIEW ENGINE ====================
-  function updatePreviewClock() {
-    var el = document.getElementById('prev-clock');
-    if (el) {
-      var d = new Date();
-      el.textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-    }
-    setTimeout(updatePreviewClock, 15000);
-  }
-
-  function updatePreviewTheme() {
-    var t = themeOf(st.themeId);
-    var tv = document.getElementById('prev-tv');
-    var topbar = document.getElementById('prev-topbar');
-    if (tv) tv.style.background = t.card;
-    if (topbar) topbar.style.background = t.topbar;
-    document.documentElement.style.setProperty('--prev-active', t.active);
-    var nameEl = document.getElementById('preview-theme-name');
-    if (nameEl) nameEl.textContent = t.name;
-    document.querySelectorAll('.prev-card').forEach(function (c) { c.style.setProperty('--prev-active', t.active); });
-    var popup = document.getElementById('prev-popup');
-    if (popup) popup.style.background = 'rgba(10,10,25,.92)';
-    var rt = document.getElementById('prev-rt-text');
-    if (rt) rt.style.color = t.rt;
-    [].forEach.call(document.querySelectorAll('.swatch'), function (s) { s.classList.remove('active'); });
-    var active = document.getElementById('theme-sw-' + st.themeId);
-    if (active) active.classList.add('active');
-  }
-
-  function updatePreviewCards() {
-    var wrap = document.getElementById('prev-cards');
-    if (!wrap) return;
-    var names = ['Imsak', 'Subuh', 'Dzuhur', 'Ashar', 'Maghrib', 'Isya'];
-    var activeIdx = 2;
-    var html = '';
-    for (var i = 0; i < names.length; i++) {
-      html += '<div class="prev-card' + (i === activeIdx ? ' active' : '') + '">' + names[i] + '</div>';
-    }
-    wrap.innerHTML = html;
-
-    if (st.template === 'cardkiri') {
-      wrap.style.cssText = 'top:15%;bottom:9%;left:0;width:16%;flex-direction:column;';
-    } else if (st.template === 'cardatas') {
-      wrap.style.cssText = 'top:15%;left:0;right:0;height:14%;flex-direction:row;';
-    } else {
-      wrap.style.cssText = 'top:15%;left:0;right:0;height:12%;flex-direction:row;';
-    }
-    updatePreviewTheme();
-  }
-
-  function updatePreviewPopup() {
-    var el = document.getElementById('prev-popup');
-    if (!el) return;
-    el.style.left = el.style.right = el.style.transform = '';
-    if (st.popupPosition === 'left') {
-      el.style.left = '4%'; el.style.transform = 'translateY(-50%) scale(' + (st.popupScale / 100) + ')'; el.style.transformOrigin = 'left center';
-    } else if (st.popupPosition === 'center') {
-      el.style.left = '50%'; el.style.transform = 'translate(-50%,-50%) scale(' + (st.popupScale / 100) + ')'; el.style.transformOrigin = 'center center';
-    } else {
-      el.style.right = '4%'; el.style.transform = 'translateY(-50%) scale(' + (st.popupScale / 100) + ')'; el.style.transformOrigin = 'right center';
-    }
-    ['left', 'center', 'right'].forEach(function (p) {
-      var b = document.getElementById('pp-' + p);
-      if (b) b.classList.toggle('active', p === st.popupPosition);
-    });
-  }
-
-  function updatePreviewRunningText() {
-    var el = document.getElementById('prev-rt-text');
-    if (!el) return;
-    el.textContent = st.runningText || '(kosong)';
-    el.style.animationDuration = Math.max(3, st.runningTextSpeed / 6) + 's';
-  }
-
-  function updatePreviewPapan() {
-    var el = document.getElementById('prev-papan');
-    var t = document.getElementById('prev-papan-t');
-    var d = document.getElementById('prev-papan-d');
-    if (!el) return;
-    el.classList.toggle('show', !!st.papanEnabled);
-    if (t) t.textContent = st.papanTitle || 'Judul Pengumuman';
-    if (d) d.textContent = st.papanDesc || '';
-  }
-
-  function updatePreviewDonasi() {
-    var el = document.getElementById('prev-donasi');
-    if (el) el.classList.toggle('show', !!st.donasiEnabled);
-  }
-
-  function updatePreviewRibbon() {
-    var el = document.getElementById('prev-ribbon');
-    if (!el) return;
-    el.classList.toggle('show', !!st.kajianEnabled && !!st.kajianPemateri);
-    el.textContent = st.kajianPemateri || '';
-    el.style.background = RIBBON_COLORS[st.kajianRibbonTema] || RIBBON_COLORS[0];
-    el.style.color = '#fff';
-    el.style.fontSize = Math.max(8, Math.min(20, st.kajianRibbonFontSize)) * 0.45 + 'px';
-    [].forEach.call(document.querySelectorAll('.ribbon-swatch'), function (s) { s.classList.remove('active'); });
-    var active = document.getElementById('ribbon-sw-' + st.kajianRibbonTema);
-    if (active) active.classList.add('active');
-  }
-
-  function updatePreviewFontTag() {
-    var tv = document.getElementById('prev-tv');
-    if (!tv) return;
-    var existing = tv.querySelector('.prev-font-tag');
-    if (st.globalFontScale !== 100) {
-      if (!existing) {
-        existing = document.createElement('div');
-        existing.className = 'prev-font-tag';
-        tv.appendChild(existing);
-      }
-      existing.textContent = 'Aa ' + st.globalFontScale + '%';
-      existing.style.fontSize = (0.32 * (st.globalFontScale / 100)) + 'rem';
-    } else if (existing) {
-      existing.remove();
-    }
-  }
-
-  function updateAllPreview() {
-    updatePreviewCards();
-    updatePreviewPopup();
-    updatePreviewRunningText();
-    updatePreviewPapan();
-    updatePreviewDonasi();
-    updatePreviewRibbon();
-    updatePreviewFontTag();
-  }
-
-  // ==================== SINKRON DENGAN FIRESTORE ====================
   function listenDeviceForUi() {
     if (unsubDevice) unsubDevice();
     unsubDevice = deviceDocRef.onSnapshot(function (snap) {
       if (!snap.exists) return;
       var settings = (snap.data() || {}).settings || {};
       applyingFromRemote = true;
-      Object.keys(settings).forEach(function (k) {
-        if (settings[k] === null || settings[k] === undefined) return;
-        if (st.hasOwnProperty(k)) st[k] = settings[k];
-      });
-      syncFormFields();
-      updateAllPreview();
+      if (settings.popupPosition) setActivePosButton(settings.popupPosition);
+      if (settings.popupScale) setSliderValue('popup-scale', settings.popupScale);
+      if (settings.globalFontScale) setSliderValue('font-scale', settings.globalFontScale);
       applyingFromRemote = false;
       setConnState(true);
     }, function () {
       setConnState(false);
     });
-  }
-
-  function syncFormFields() {
-    setChecked('sw-dhuha', st.dhuhaEnabled);
-    setChecked('sw-jumat', st.modeJumat);
-    setVal('rt-text', st.runningText);
-    setVal('rt-speed', st.runningTextSpeed); setSuffix('rt-speed', 's');
-    setVal('bg-speed', st.bgSpeed);
-    setVal('bg-mode', st.bgMode);
-    setChecked('sw-mute', st.muteAll);
-    setVal('vol-pre', st.audioVolumePreAdzan); setSuffix('vol-pre', '%');
-    setVal('vol-adzan', st.audioVolumeAdzan); setSuffix('vol-adzan', '%');
-    setVal('vol-alarm', st.audioVolumeAlarm); setSuffix('vol-alarm', '%');
-    setChecked('sw-papan', st.papanEnabled);
-    setVal('papan-t', st.papanTitle);
-    setVal('papan-d', st.papanDesc);
-    setChecked('sw-donasi', st.donasiEnabled);
-    setVal('dn-judul', st.donasiJudul);
-    setVal('dn-desc', st.donasiDesc);
-    setChecked('sw-kajian', st.kajianEnabled);
-    setChecked('sw-hidecards', st.hideCards);
-    setVal('kj-pemateri', st.kajianPemateri);
-    setVal('kj-delay', st.kajianPemateriDelay);
-    setVal('kj-duration', st.kajianPemateriDuration);
-    setVal('kj-fontsize', st.kajianRibbonFontSize); setSuffix('kj-fontsize', 'px');
-    setVal('pp-scale', st.popupScale); setSuffix('pp-scale', '%');
-    setVal('font-scale', st.globalFontScale); setSuffix('font-scale', '%');
-    ['tpl-default', 'tpl-cardkiri', 'tpl-cardatas'].forEach(function (id) {
-      var b = document.getElementById(id);
-      if (b) b.classList.toggle('active', id === 'tpl-' + st.template);
-    });
-  }
-
-  function setChecked(id, v) { var el = document.getElementById(id); if (el) el.checked = !!v; }
-  function setVal(id, v) { var el = document.getElementById(id); if (el && v !== undefined && v !== null) el.value = v; }
-  function setSuffix(id, suf) {
-    var lbl = document.getElementById(id + '-val');
-    var input = document.getElementById(id);
-    if (lbl && input) lbl.textContent = input.value + suf;
   }
 
   function setConnState(online) {
@@ -766,89 +267,41 @@
     text.textContent = online ? 'Terhubung' : 'Terputus, mencoba lagi...';
   }
 
+  function setActivePosButton(pos) {
+    ['left', 'center', 'right'].forEach(function (p) {
+      var el = document.getElementById('pos-' + p);
+      if (el) el.classList.toggle('active', p === pos);
+    });
+  }
+
+  function setSliderValue(id, val) {
+    var el = document.getElementById(id);
+    var lbl = document.getElementById(id + '-val');
+    if (el) el.value = val;
+    if (lbl) lbl.textContent = val + '%';
+  }
+
   function pushSetting(key, value) {
     if (applyingFromRemote) return;
     var patch = {};
-    patch['settings.' + key] = value;
+    patch['settings.' + key] = typeof value === 'string' ? value : parseInt(value, 10);
     patch.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
     patch.updatedBy = myUid;
-    deviceDocRef.update(patch).catch(function () { toast('Gagal mengirim (offline?)'); });
+    deviceDocRef.update(patch).catch(function (e) {
+      toast('Gagal mengirim (offline?)');
+    });
   }
 
-  // ==================== API TOMBOL/SLIDER (dipanggil dari HTML) ====================
+  // Dipakai oleh tombol/slider di HTML di atas
   window.ControlPanel = {
-    toggleCard: function (id) {
-      var card = document.getElementById('card-' + id);
-      if (card) card.classList.toggle('open');
+    setPos: function (pos) {
+      setActivePosButton(pos);
+      pushSetting('popupPosition', pos);
     },
-
-    setTemplate: function (name) {
-      st.template = name; updatePreviewCards();
-      ['tpl-default', 'tpl-cardkiri', 'tpl-cardatas'].forEach(function (id) {
-        document.getElementById(id).classList.toggle('active', id === 'tpl-' + name);
-      });
-      pushSetting('template', name); toast('Layout diterapkan ✓');
-    },
-    setTheme: function (id) { st.themeId = id; updatePreviewTheme(); pushSetting('themeId', id); toast('Tema diterapkan ✓'); },
-
-    setDhuha: function (v) { st.dhuhaEnabled = v; pushSetting('dhuhaEnabled', v); },
-    setModeJumat: function (v) { st.modeJumat = v; pushSetting('modeJumat', v); },
-
-    previewRunningText: function (v) { st.runningText = v; updatePreviewRunningText(); },
-    setRunningText: function (v) { pushSetting('runningText', v); toast('Running text disimpan ✓'); },
-    previewRtSpeed: function (v) { st.runningTextSpeed = parseInt(v, 10); setSuffix('rt-speed', 's'); updatePreviewRunningText(); },
-    setRtSpeed: function (v) { pushSetting('runningTextSpeed', parseInt(v, 10)); },
-
-    setBgSpeed: function (v) { pushSetting('bgSpeed', parseInt(v, 10)); toast('Durasi slide disimpan ✓'); },
-    setBgMode: function (v) { pushSetting('bgMode', v); toast('Transisi diterapkan ✓'); },
-
-    setMuteAll: function (v) { st.muteAll = v; pushSetting('muteAll', v); },
-    previewVol: function (type, v) {
-      var id = type === 'pre-adzan' ? 'vol-pre' : (type === 'adzan' ? 'vol-adzan' : 'vol-alarm');
-      setSuffix(id, '%');
-    },
-    setVol: function (type, v) {
-      var key = type === 'pre-adzan' ? 'audioVolumePreAdzan' : (type === 'adzan' ? 'audioVolumeAdzan' : 'audioVolumeAlarm');
-      pushSetting(key, parseInt(v, 10));
-    },
-
-    setPapanEnabled: function (v) { st.papanEnabled = v; updatePreviewPapan(); pushSetting('papanEnabled', v); },
-    previewPapan: function () {
-      st.papanTitle = document.getElementById('papan-t').value;
-      st.papanDesc = document.getElementById('papan-d').value;
-      updatePreviewPapan();
-    },
-    setPapanTitle: function (v) { pushSetting('papanTitle', v); },
-    setPapanDesc: function (v) { pushSetting('papanDesc', v); },
-
-    setDonasiEnabled: function (v) { st.donasiEnabled = v; updatePreviewDonasi(); pushSetting('donasiEnabled', v); },
-    setDonasiJudul: function (v) { pushSetting('donasiJudul', v); },
-    setDonasiDesc: function (v) { pushSetting('donasiDesc', v); },
-
-    setKajianEnabled: function (v) { st.kajianEnabled = v; updatePreviewRibbon(); pushSetting('kajianEnabled', v); },
-    setHideCards: function (v) { st.hideCards = v; pushSetting('hideCards', v); },
-    previewRibbon: function () { st.kajianPemateri = document.getElementById('kj-pemateri').value; updatePreviewRibbon(); },
-    setKajianPemateri: function (v) { pushSetting('kajianPemateri', v); },
-    setKajianDelay: function (v) { pushSetting('kajianPemateriDelay', parseInt(v, 10)); },
-    setKajianDuration: function (v) { pushSetting('kajianPemateriDuration', parseInt(v, 10)); },
-    setRibbonTema: function (idx) { st.kajianRibbonTema = idx; updatePreviewRibbon(); pushSetting('kajianRibbonTema', idx); },
-    previewRibbonFont: function (v) { st.kajianRibbonFontSize = parseInt(v, 10); setSuffix('kj-fontsize', 'px'); updatePreviewRibbon(); },
-    setRibbonFont: function (v) { pushSetting('kajianRibbonFontSize', parseInt(v, 10)); },
-
-    setPos: function (pos) { st.popupPosition = pos; updatePreviewPopup(); pushSetting('popupPosition', pos); },
-    previewScale: function (v) { st.popupScale = parseInt(v, 10); setSuffix('pp-scale', '%'); updatePreviewPopup(); },
-    commitScale: function (v) { pushSetting('popupScale', parseInt(v, 10)); },
-
-    previewFont: function (v) { st.globalFontScale = parseInt(v, 10); setSuffix('font-scale', '%'); updatePreviewFontTag(); },
-    commitFont: function (v) {
-      v = parseInt(v, 10);
-      st.globalFontScale = v;
-      var el = document.getElementById('font-scale');
-      if (el) el.value = v;
-      setSuffix('font-scale', '%');
-      updatePreviewFontTag();
-      pushSetting('globalFontScale', v);
-    },
+    previewScale: function (val) { setSliderValue('popup-scale', val); },
+    commitScale: function (val) { pushSetting('popupScale', val); },
+    previewFont: function (val) { setSliderValue('font-scale', val); },
+    commitFont: function (val) { pushSetting('globalFontScale', val); },
   };
 
   init();
