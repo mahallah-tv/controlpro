@@ -61,9 +61,33 @@
   /* live prayer strip */
   .prayer-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   .prayer-strip.row2{margin-top:8px;}
-  .p-item{background:var(--panel2);border-radius:10px;padding:8px 4px;text-align:center;}
+  .p-item{background:var(--panel2);border-radius:10px;padding:8px 4px;text-align:center;
+    cursor:pointer;border:2px solid transparent;transition:.15s;}
+  .p-item:active{transform:scale(.95);}
+  .p-item.selected{border-color:var(--amber);background:rgba(245,166,35,.15);}
   .p-item .pn{font-size:.62rem;color:var(--muted);text-transform:uppercase;}
   .p-item .pt{font-size:.95rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:2px;}
+
+  /* prayer settings modal-box (inline, muncul di bawah strip) */
+  .prayer-modal-box{margin-top:12px;background:var(--panel2);border:1px solid var(--amber);
+    border-radius:14px;padding:14px 16px;animation:pmb-in .2s ease;}
+  @keyframes pmb-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .pmb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .pmb-head span:first-child{font-size:.9rem;font-weight:700;color:var(--gold);}
+  .pmb-close{color:var(--muted);font-size:1.1rem;cursor:pointer;padding:2px 8px;}
+  .pmb-time{text-align:center;font-size:2.1rem;font-weight:800;font-family:'JetBrains Mono',monospace;
+    color:#fff;margin:6px 0 12px;}
+  .pmb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;
+    border-top:1px solid var(--line);}
+  .pmb-row label{font-size:.8rem;color:var(--text);flex:1;}
+  .pmb-row input{width:74px;background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:7px 8px;color:var(--gold);font-size:.85rem;text-align:center;font-family:'JetBrains Mono',monospace;}
+  .pmb-offset-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px;}
+  .pmb-offset-btns .offset-btn{background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:9px;padding:9px 4px;font-size:.82rem;font-weight:600;cursor:pointer;text-align:center;}
+  .pmb-offset-btns .offset-btn.reset{background:var(--amber);color:#1a1206;border-color:var(--amber);}
+  .pmb-offset-val{text-align:center;font-size:.75rem;color:var(--muted);margin:8px 0 0;}
+  .pmb-offset-val b{color:var(--gold);}
 
   /* toggle switch */
   .switch{position:relative;width:46px;height:26px;flex-shrink:0;}
@@ -186,6 +210,22 @@
       <h3>Waktu Sholat Hari Ini</h3>
       <div class="prayer-strip" id="prayer-strip-1"></div>
       <div class="prayer-strip row2" id="prayer-strip-2"></div>
+
+      <div class="prayer-modal-box" id="pmb" style="display:none">
+        <div class="pmb-head">
+          <span id="pmb-title">⏱ Pengaturan</span>
+          <span class="pmb-close" id="pmb-close">✕</span>
+        </div>
+        <div class="pmb-time" id="pmb-time">--:--</div>
+
+        <div id="pmb-minutes-fields"></div>
+
+        <label class="f-label">📝 Penyesuaian Manual (menit)</label>
+        <div class="pmb-offset-btns" id="pmb-offset-btns"></div>
+        <p class="pmb-offset-val">Offset: <b id="pmb-offset-display">0</b> menit</p>
+
+        <button class="btn-save-small" id="pmb-save">💾 Simpan</button>
+      </div>
     </div>
 
     <div class="tabs">
@@ -730,16 +770,85 @@
   // ===================== Live state dari TV =====================
   var PRAYER_ORDER_1 = ['Imsak','Shubuh','Syuruq','Dhuha'];
   var PRAYER_ORDER_2 = ['Dzuhur','Ashar','Maghrib','Isya'];
+  var SIMPLE_KEYS = ['Imsak','Syuruq','Dhuha']; // tidak punya countdown/iqamah/overlay, sama seperti di TV
+
+  var lastState = null;       // salinan terakhir state dari TV
+  var pmbOpenKey = null;      // key sholat yang modal-box-nya sedang terbuka
+  var pmbLocalOffset = 0;     // offset lokal (untuk preview instan sebelum konfirmasi TV)
+  var pmbLocalSettings = {};  // {countdownBefore, iqamahDuration, overlayDuration, jumatBefore}
+
+  function build(order){
+    return order.map(function(k){
+      var sel = (pmbOpenKey === k) ? ' selected' : '';
+      return '<div class="p-item'+sel+'" data-key="'+k+'"><div class="pn">'+k+'</div><div class="pt">'+((lastState&&lastState.prayerTimes&&lastState.prayerTimes[k])||'--:--')+'</div></div>';
+    }).join('');
+  }
 
   function renderPrayerStrip(times){
-    times = times || {};
-    function build(order){
-      return order.map(function(k){
-        return '<div class="p-item"><div class="pn">'+k+'</div><div class="pt">'+(times[k]||'--:--')+'</div></div>';
-      }).join('');
-    }
     $('prayer-strip-1').innerHTML = build(PRAYER_ORDER_1);
     $('prayer-strip-2').innerHTML = build(PRAYER_ORDER_2);
+  }
+
+  function addMinsLocal(timeStr, offset){
+    var parts = (timeStr || '00:00').split(':');
+    var h = parseInt(parts[0],10) || 0, m = parseInt(parts[1],10) || 0;
+    var t = h * 60 + m + (offset || 0);
+    t = ((t % 1440) + 1440) % 1440;
+    var hh = Math.floor(t / 60), mm = t % 60;
+    return (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  }
+
+  var MIN_FIELD_DEFS = [
+    { target: 'countdownBefore', label: '⏰ Countdown Sebelum Adzan', def: 10 },
+    { target: 'iqamahDuration',  label: '🕌 Durasi Menunggu Iqamah', def: 10 },
+    { target: 'overlayDuration', label: '⚫ Durasi Overlay Hitam',    def: 10 }
+  ];
+
+  function openPmb(key){
+    pmbOpenKey = key;
+    var rawTimes = (lastState && lastState.prayerTimes) || {};
+    var rawOffsets = (lastState && lastState.prayerOffsets) || {};
+    var rawSettings = ((lastState && lastState.prayerSettings) || {})[key] || {};
+
+    pmbLocalOffset = rawOffsets[key] || 0;
+    pmbLocalSettings = {
+      countdownBefore: rawSettings.countdownBefore,
+      iqamahDuration: rawSettings.iqamahDuration,
+      overlayDuration: rawSettings.overlayDuration,
+      jumatBefore: rawSettings.jumatBefore !== undefined ? rawSettings.jumatBefore : 5
+    };
+
+    $('pmb-title').textContent = '⏱ Pengaturan ' + (key === 'Dzuhur' ? "Dzuhur / Jum'at" : key);
+    $('pmb-time').textContent = addMinsLocal(rawTimes[key], pmbLocalOffset);
+
+    var simple = SIMPLE_KEYS.indexOf(key) !== -1;
+    var fieldsHtml = '';
+    if (!simple){
+      MIN_FIELD_DEFS.forEach(function(f){
+        var val = pmbLocalSettings[f.target] !== undefined ? pmbLocalSettings[f.target] : f.def;
+        fieldsHtml += '<div class="pmb-row"><label>'+f.label+'</label><input type="number" min="0" data-mintarget="'+f.target+'" value="'+val+'"></div>';
+      });
+      if (key === 'Dzuhur'){
+        fieldsHtml += '<div class="pmb-row"><label>🕌 Jum\'at: Matikan Sebelum</label><input type="number" min="0" data-mintarget="jumatBefore" value="'+pmbLocalSettings.jumatBefore+'"></div>';
+      }
+    }
+    $('pmb-minutes-fields').innerHTML = fieldsHtml;
+
+    var offsetVals = [-10,-5,-1,'Reset',1,5,10];
+    $('pmb-offset-btns').innerHTML = offsetVals.map(function(v){
+      if (v === 'Reset') return '<div class="offset-btn reset" data-off="reset">⟳ Reset</div>';
+      return '<div class="offset-btn" data-off="'+v+'">'+(v>0?'+'+v:v)+'</div>';
+    }).join('');
+    $('pmb-offset-display').textContent = pmbLocalOffset;
+
+    $('pmb').style.display = 'block';
+    renderPrayerStrip(); // refresh highlight "selected"
+  }
+
+  function closePmb(){
+    pmbOpenKey = null;
+    $('pmb').style.display = 'none';
+    renderPrayerStrip();
   }
 
   function listenState(){
@@ -750,9 +859,10 @@
       var s = doc.state;
       if (s){
         suppressEcho = true;
+        lastState = s;
 
         if (s.masjidName) $('masjid-name').textContent = s.masjidName;
-        renderPrayerStrip(s.prayerTimes);
+        renderPrayerStrip();
 
         $('tg-dhuha').checked = !!s.dhuhaEnabled;
         $('tg-jumat').checked = !!s.modeJumat;
@@ -891,6 +1001,50 @@
       head.addEventListener('click', function(){
         head.parentElement.classList.toggle('open');
       });
+    });
+
+    // Prayer strip: klik kartu -> buka/tutup modal-box pengaturan
+    function handlePrayerClick(e){
+      var el = e.target.closest('[data-key]');
+      if (!el) return;
+      var key = el.dataset.key;
+      if (pmbOpenKey === key) { closePmb(); }
+      else { openPmb(key); }
+    }
+    $('prayer-strip-1').addEventListener('click', handlePrayerClick);
+    $('prayer-strip-2').addEventListener('click', handlePrayerClick);
+    $('pmb-close').addEventListener('click', closePmb);
+
+    // Tombol offset (-10/-5/-1/Reset/+1/+5/+10)
+    $('pmb-offset-btns').addEventListener('click', function(e){
+      var el = e.target.closest('[data-off]');
+      if (!el || !pmbOpenKey) return;
+      var raw = el.dataset.off;
+      var delta = raw === 'reset' ? 'reset' : parseInt(raw, 10);
+
+      // preview instan di HP
+      pmbLocalOffset = (delta === 'reset') ? 0 : (pmbLocalOffset + delta);
+      $('pmb-offset-display').textContent = pmbLocalOffset;
+      var rawTimes = (lastState && lastState.prayerTimes) || {};
+      $('pmb-time').textContent = addMinsLocal(rawTimes[pmbOpenKey], pmbLocalOffset);
+
+      sendValue('setPrayerOffset', { key: pmbOpenKey, delta: delta }, null);
+    });
+
+    // Field menit (countdown/iqamah/overlay/jumatBefore) — kirim tiap kali diubah
+    $('pmb-minutes-fields').addEventListener('change', function(e){
+      var el = e.target.closest('[data-mintarget]');
+      if (!el || !pmbOpenKey) return;
+      var val = parseInt(el.value, 10) || 0;
+      pmbLocalSettings[el.dataset.mintarget] = val;
+      sendValue('setPrayerMinute', { key: pmbOpenKey, target: el.dataset.mintarget, value: val }, null);
+    });
+
+    // Simpan -> TV persist permanen + jadwal ulang (sama seperti tombol Simpan di TV)
+    $('pmb-save').addEventListener('click', function(){
+      if (!pmbOpenKey) return;
+      sendValue('commitPrayerSettings', { key: pmbOpenKey }, 'Pengaturan ' + pmbOpenKey + ' disimpan');
+      closePmb();
     });
 
     // Kartu Adzan (replika)
