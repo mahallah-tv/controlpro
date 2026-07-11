@@ -262,16 +262,103 @@
       </div>
     </div>
 
-    <!-- TAB: SEMUA FITUR (katalog otomatis dari TV) -->
+    <!-- TAB: SEMUA FITUR (lengkap, sama seperti Pengaturan di TV) -->
     <div class="tabpage" data-page="semua">
+
       <div class="card">
-        <h3>Cari &amp; Jalankan Fitur Apapun</h3>
+        <h3>📝 Running Text</h3>
+        <textarea class="search-box" id="rt-text" rows="3" placeholder="Isi running text..." style="resize:vertical;margin-bottom:12px"></textarea>
+        <div class="slider-row">
+          <div class="sr-top"><span>Kecepatan (detik, makin kecil makin cepat)</span><b id="val-rt-speed">60</b></div>
+          <input type="range" min="20" max="200" id="rg-rt-speed">
+        </div>
+        <div class="chip" id="btn-save-rt" style="text-align:center;margin-top:8px">💾 Simpan Running Text</div>
+      </div>
+
+      <div class="card">
+        <h3>🖼 Background Slideshow</h3>
+        <div class="row" style="padding-top:0">
+          <div class="label" style="width:100%">
+            Durasi per Slide (detik)
+            <input type="number" class="search-box" id="bg-speed" min="2" max="120" style="margin:8px 0 0">
+          </div>
+        </div>
+        <label style="font-size:.82rem;color:var(--muted);display:block;margin:6px 0">Model Transisi</label>
+        <select class="search-box" id="bg-transition" style="margin-bottom:0">
+          <option value="fade">Fade</option>
+          <option value="slide-left">Slide Kiri</option>
+          <option value="slide-right">Slide Kanan</option>
+          <option value="zoom-in">Zoom In</option>
+          <option value="zoom-out">Zoom Out</option>
+          <option value="flip">Flip</option>
+        </select>
+        <div class="chip" id="btn-save-bg" style="text-align:center;margin-top:10px">💾 Simpan Pengaturan Background</div>
+        <div class="sub" style="margin-top:10px">Upload gambar background hanya bisa dilakukan langsung di layar TV.</div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div><div class="label">📋 Papan Informasi</div><div class="sub">Tampilkan pengumuman di layar TV</div></div>
+          <label class="switch"><input type="checkbox" id="tg-papan"><span class="slider"></span></label>
+        </div>
+        <input class="search-box" id="papan-title" placeholder="Judul Pengumuman" style="margin-top:12px">
+        <textarea class="search-box" id="papan-desc" rows="3" placeholder="Deskripsi..." style="resize:vertical;margin-bottom:0"></textarea>
+        <div class="chip" id="btn-save-papan" style="text-align:center;margin-top:10px">💾 Simpan Papan Informasi</div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div><div class="label">🎓 Mode Kajian</div><div class="sub">Aktifkan tampilan kajian / live kamera</div></div>
+          <label class="switch"><input type="checkbox" id="tg-kajian"><span class="slider"></span></label>
+        </div>
+        <div class="row">
+          <div><div class="label">Sembunyikan Card Adzan</div><div class="sub">Saat Mode Kajian aktif</div></div>
+          <label class="switch"><input type="checkbox" id="tg-hide-cards"><span class="slider"></span></label>
+        </div>
+        <label style="font-size:.82rem;color:var(--muted);display:block;margin:12px 0 6px">Nama Pemateri</label>
+        <input class="search-box" id="kajian-pemateri" placeholder="Ustadz ..." style="margin-bottom:10px">
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <div style="flex:1">
+            <label style="font-size:.76rem;color:var(--muted);display:block;margin-bottom:6px">Muncul setelah (detik)</label>
+            <input type="number" class="search-box" id="kajian-delay" min="0" style="margin-bottom:0">
+          </div>
+          <div style="flex:1">
+            <label style="font-size:.76rem;color:var(--muted);display:block;margin-bottom:6px">Tampil selama (detik)</label>
+            <input type="number" class="search-box" id="kajian-duration" min="5" style="margin-bottom:0">
+          </div>
+        </div>
+        <label style="font-size:.82rem;color:var(--muted);display:block;margin-bottom:6px">Tema Warna Ribbon Nama</label>
+        <div class="btn-grid cols2" id="ribbon-tema-buttons" style="margin-bottom:10px"></div>
+        <div class="chip" id="btn-save-kajian" style="text-align:center">💾 Simpan Mode Kajian</div>
+        <div class="sub" style="margin-top:10px">Upload gambar/video kajian hanya bisa dilakukan langsung di layar TV.</div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div><div class="label">💳 Donasi</div><div class="sub">Tampilkan info donasi di layar TV</div></div>
+          <label class="switch"><input type="checkbox" id="tg-donasi"><span class="slider"></span></label>
+        </div>
+        <input class="search-box" id="donasi-judul" placeholder="Judul Donasi (contoh: Donasi Masjid)" style="margin-top:12px">
+        <textarea class="search-box" id="donasi-desc" rows="2" placeholder="Contoh: BCA 1234567890 a.n. Masjid..." style="resize:vertical;margin-bottom:0"></textarea>
+        <div class="chip" id="btn-save-donasi" style="text-align:center;margin-top:10px">💾 Simpan Donasi</div>
+        <div class="sub" style="margin-top:10px">Upload QR code donasi hanya bisa dilakukan langsung di layar TV.</div>
+      </div>
+
+      <div class="card">
+        <h3>🎨 Tema Tampilan</h3>
+        <div class="btn-grid cols2" id="tema-buttons"></div>
+      </div>
+
+      <div class="card">
+        <h3>Cari &amp; Jalankan Fitur Lainnya</h3>
         <input class="search-box" id="cat-search" placeholder="Cari fitur... contoh: donasi, kajian, tema">
         <div class="cat-list" id="cat-list">
           <div class="sub">Memuat daftar fitur dari TV...</div>
         </div>
       </div>
+
     </div>
+
 
     <div class="unpair-link" id="btn-unpair">Putuskan koneksi dari TV ini</div>
   </div>
@@ -307,6 +394,54 @@
   var suppressEcho = false; // hindari slider "melompat" saat kita sendiri yang mengubah
 
   var CITY_LIST = ["Jakarta","Bogor","Depok","Tangerang","Bekasi","Bandung","Cimahi","Garut","Tasikmalaya","Cirebon","Sukabumi","Sumedang","Cianjur","Purwakarta","Karawang","Subang","Majalengka","Kuningan","Indramayu","Semarang","Solo","Yogyakarta","Magelang","Salatiga","Pekalongan","Tegal","Purwokerto","Cilacap","Banyumas","Kebumen","Purworejo","Wonosobo","Kudus","Jepara","Demak","Grobogan","Rembang","Blora","Pati","Kendal","Batang","Pemalang","Brebes","Surabaya","Malang","Sidoarjo","Gresik","Mojokerto","Pasuruan","Probolinggo","Jember","Banyuwangi","Kediri","Blitar","Tulungagung","Madiun","Nganjuk","Jombang","Bojonegoro","Tuban","Lamongan","Bangkalan","Pamekasan","Sumenep","Bondowoso","Situbondo","Lumajang","Medan","Binjai","Pematangsiantar","Tebing Tinggi","Kisaran","Padangsidempuan","Aceh","Sabang","Lhokseumawe","Langsa","Padang","Bukittinggi","Payakumbuh","Solok","Sawahlunto","Pekanbaru","Dumai","Batam","Tanjungpinang","Jambi","Palembang","Prabumulih","Lubuklinggau","Bengkulu","Bandar Lampung","Metro","Pontianak","Singkawang","Palangkaraya","Banjarmasin","Banjarbaru","Balikpapan","Samarinda","Bontang","Tarakan","Nunukan","Makassar","Parepare","Palopo","Kendari","Baubau","Palu","Gorontalo","Manado","Bitung","Tomohon","Kotamobagu","Ambon","Ternate","Tidore","Denpasar","Singaraja","Mataram","Bima","Kupang","Ende","Jayapura","Sorong","Merauke","Manokwari"].sort();
+
+  // Daftar ini HARUS sama urutan & id-nya dengan THEMES di app.js (TV)
+  var THEMES_LIST = [
+    { id:'default',  name:'Classic Dark',   preview:['#000','#F5A623'] },
+    { id:'emerald',  name:'Emerald Night',  preview:['#0d1f1a','#27ae60'] },
+    { id:'royal',    name:'Royal Blue',     preview:['#0a0a2e','#2980b9'] },
+    { id:'burgundy', name:'Burgundy',       preview:['#200010','#8e1a3b'] },
+    { id:'golden',   name:'Golden Palace',  preview:['#1a1400','#d4ac0d'] },
+    { id:'teal',     name:'Teal Ocean',     preview:['#001a1f','#17a589'] },
+    { id:'slate',    name:'Slate Gray',     preview:['#1c2333','#5d6d7e'] },
+    { id:'copper',   name:'Copper Sunset',  preview:['#1f0a00','#ca6f1e'] }
+  ];
+
+  // Daftar ini HARUS sama urutan (index) dengan RIBBON_TEMAS di app.js (TV)
+  var RIBBON_TEMAS_LIST = [
+    { label:'Default', bg:'linear-gradient(135deg,#1a1a2e 0%,#c0392b 100%)' },
+    { label:'Hijau',    bg:'linear-gradient(135deg,#0d1f1a 0%,#27ae60 100%)' },
+    { label:'Biru',     bg:'linear-gradient(135deg,#0a0a2e 0%,#2980b9 100%)' },
+    { label:'Emas',     bg:'linear-gradient(135deg,#1a1400 0%,#d4ac0d 100%)' },
+    { label:'Ungu',     bg:'linear-gradient(135deg,#1a0020 0%,#8e44ad 100%)' },
+    { label:'Teal',     bg:'linear-gradient(135deg,#001a1f 0%,#17a589 100%)' },
+    { label:'Hitam',    bg:'linear-gradient(135deg,#111 0%,#333 100%)' },
+    { label:'Putih',    bg:'linear-gradient(135deg,#eee 0%,#fff 100%)' }
+  ];
+
+  var activeTheme = 'default';
+  var activeRibbonTema = 0;
+
+  function renderThemeButtons(){
+    var el = $('tema-buttons');
+    if (!el) return;
+    el.innerHTML = THEMES_LIST.map(function(t){
+      var isActive = t.id === activeTheme;
+      return '<div class="chip" data-theme="'+t.id+'" '+
+        'style="background:linear-gradient(135deg,'+t.preview[0]+' 0%,'+t.preview[1]+' 100%);color:#fff;'+
+        'border:2px solid '+(isActive?'#fff':'transparent')+'">'+t.name+(isActive?' ✓':'')+'</div>';
+    }).join('');
+  }
+
+  function renderRibbonButtons(){
+    var el = $('ribbon-tema-buttons');
+    if (!el) return;
+    el.innerHTML = RIBBON_TEMAS_LIST.map(function(t, i){
+      var isActive = i === activeRibbonTema;
+      return '<div class="chip" data-ribbon="'+i+'" '+
+        'style="background:'+t.bg+';color:#fff;border:2px solid '+(isActive?'#fff':'transparent')+'">'+t.label+(isActive?' ✓':'')+'</div>';
+    }).join('');
+  }
 
   function $(id){ return document.getElementById(id); }
   function showToast(msg){
@@ -397,6 +532,8 @@
     $('pairing-screen').style.display = 'none';
     $('main-screen').style.display = 'block';
     populateCitySelect();
+    renderThemeButtons();
+    renderRibbonButtons();
     attachControlHandlers();
     listenState();
   }
@@ -477,6 +614,41 @@
         $('sleep-status').textContent = s.sleepModeEnabled
           ? ('Jadwal otomatis: AKTIF' + (s.overlayActive ? ' • Layar sedang HITAM' : ''))
           : (s.overlayActive ? 'Layar hitam (manual)' : 'Jadwal otomatis: nonaktif');
+
+        // ── Semua Fitur: hindari menimpa field yang sedang diketik user ──
+        function setIfIdle(id, val){
+          var el = $(id);
+          if (el && document.activeElement !== el) el.value = val;
+        }
+
+        setIfIdle('rt-text', s.runningText || '');
+        $('rg-rt-speed').value = s.runningTextSpeed || 60;
+        $('val-rt-speed').textContent = s.runningTextSpeed || 60;
+
+        setIfIdle('bg-speed', s.bgSpeed || 8);
+        if ($('bg-transition') && document.activeElement !== $('bg-transition')) $('bg-transition').value = s.bgMode || 'fade';
+
+        var papan = s.papanInfo || {};
+        $('tg-papan').checked = !!papan.enabled;
+        setIfIdle('papan-title', papan.title || '');
+        setIfIdle('papan-desc', papan.desc || '');
+
+        var kajian = s.kajian || {};
+        $('tg-kajian').checked = !!kajian.enabled;
+        $('tg-hide-cards').checked = !!kajian.hideCards;
+        setIfIdle('kajian-pemateri', kajian.pemateri || '');
+        setIfIdle('kajian-delay', kajian.delay || 5);
+        setIfIdle('kajian-duration', kajian.duration || 30);
+        activeRibbonTema = kajian.ribbonTema || 0;
+        renderRibbonButtons();
+
+        var donasi = s.donasi || {};
+        $('tg-donasi').checked = !!donasi.enabled;
+        setIfIdle('donasi-judul', donasi.judul || '');
+        setIfIdle('donasi-desc', donasi.desc || '');
+
+        activeTheme = s.currentTheme || 'default';
+        renderThemeButtons();
 
         setTimeout(function(){ suppressEcho = false; }, 50);
       }
@@ -584,6 +756,64 @@
       var btn = e.target.closest('[data-run]');
       if (!btn) return;
       sendCode(btn.dataset.run, btn.dataset.label);
+    });
+
+    // ── Running Text ──
+    $('rg-rt-speed').addEventListener('input', function(){ $('val-rt-speed').textContent = this.value; });
+    $('btn-save-rt').addEventListener('click', function(){
+      sendValue('setRunningText', { text: $('rt-text').value, speed: parseInt($('rg-rt-speed').value,10) }, 'Running text disimpan');
+    });
+
+    // ── Background ──
+    $('btn-save-bg').addEventListener('click', function(){
+      sendValue('setBgSettings', { speed: parseInt($('bg-speed').value,10) || 8, mode: $('bg-transition').value }, 'Pengaturan background disimpan');
+    });
+
+    // ── Papan Informasi ──
+    function sendPapanInfo(){
+      sendValue('setPapanInfo', { enabled: $('tg-papan').checked, title: $('papan-title').value, desc: $('papan-desc').value }, 'Papan informasi diperbarui');
+    }
+    $('tg-papan').addEventListener('change', function(){ if (!suppressEcho) sendPapanInfo(); });
+    $('btn-save-papan').addEventListener('click', sendPapanInfo);
+
+    // ── Mode Kajian ──
+    $('tg-kajian').addEventListener('change', function(){
+      if (suppressEcho) return;
+      sendValue('setKajianEnabled', this.checked, this.checked ? 'Mode kajian aktif' : 'Mode kajian nonaktif');
+    });
+    $('tg-hide-cards').addEventListener('change', function(){
+      if (suppressEcho) return;
+      sendValue('setHideCards', this.checked, 'Sembunyikan card diubah');
+    });
+    $('btn-save-kajian').addEventListener('click', function(){
+      sendValue('setKajianPemateri', {
+        pemateri: $('kajian-pemateri').value,
+        delay: parseInt($('kajian-delay').value,10) || 5,
+        duration: parseInt($('kajian-duration').value,10) || 30
+      }, 'Info pemateri disimpan');
+    });
+    $('ribbon-tema-buttons').addEventListener('click', function(e){
+      var chip = e.target.closest('[data-ribbon]');
+      if (!chip) return;
+      activeRibbonTema = parseInt(chip.dataset.ribbon,10);
+      renderRibbonButtons();
+      sendValue('setKajianRibbonTema', activeRibbonTema, 'Tema ribbon diubah');
+    });
+
+    // ── Donasi ──
+    function sendDonasi(){
+      sendValue('setDonasi', { enabled: $('tg-donasi').checked, judul: $('donasi-judul').value, desc: $('donasi-desc').value }, 'Donasi diperbarui');
+    }
+    $('tg-donasi').addEventListener('change', function(){ if (!suppressEcho) sendDonasi(); });
+    $('btn-save-donasi').addEventListener('click', sendDonasi);
+
+    // ── Tema ──
+    $('tema-buttons').addEventListener('click', function(e){
+      var chip = e.target.closest('[data-theme]');
+      if (!chip) return;
+      activeTheme = chip.dataset.theme;
+      renderThemeButtons();
+      sendValue('setTheme', activeTheme, 'Tema: ' + activeTheme);
     });
 
     $('btn-unpair').addEventListener('click', unpair);
