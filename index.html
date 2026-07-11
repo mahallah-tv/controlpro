@@ -61,9 +61,29 @@
   /* live prayer strip */
   .prayer-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
   .prayer-strip.row2{margin-top:8px;}
-  .p-item{background:var(--panel2);border-radius:10px;padding:8px 4px;text-align:center;}
+  .p-item{background:var(--panel2);border-radius:10px;padding:8px 4px;text-align:center;
+    cursor:pointer;border:2px solid transparent;transition:.15s;}
+  .p-item.active{border-color:var(--amber);}
   .p-item .pn{font-size:.62rem;color:var(--muted);text-transform:uppercase;}
   .p-item .pt{font-size:.95rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:2px;}
+
+  /* inline prayer settings box */
+  #prayer-modal-box{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);
+    animation:pm-in .18s ease;}
+  @keyframes pm-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .prayer-modal-title{display:flex;align-items:center;justify-content:space-between;
+    font-size:.92rem;font-weight:700;color:var(--gold);margin-bottom:12px;}
+  .prayer-modal-title .close-x{cursor:pointer;color:var(--muted);font-size:1.15rem;line-height:1;padding:2px 6px;}
+  .prayer-current-time{text-align:center;font-family:'JetBrains Mono',monospace;
+    font-size:1.9rem;font-weight:700;color:var(--gold);margin-bottom:16px;}
+  .pm-field{margin-bottom:12px;}
+  .pm-field label{font-size:.76rem;color:var(--muted);display:block;margin-bottom:6px;}
+  .offset-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+  .offset-btn{flex:1;min-width:42px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--text);border-radius:8px;padding:10px 4px;text-align:center;cursor:pointer;
+    font-size:.85rem;font-weight:700;}
+  .offset-btn:active{transform:scale(.95);}
+  .offset-btn.reset{flex-basis:100%;color:var(--amber);border-color:var(--amber);}
 
   /* toggle switch */
   .switch{position:relative;width:46px;height:26px;flex-shrink:0;}
@@ -156,6 +176,7 @@
       <h3>Waktu Sholat Hari Ini</h3>
       <div class="prayer-strip" id="prayer-strip-1"></div>
       <div class="prayer-strip row2" id="prayer-strip-2"></div>
+      <div id="prayer-modal-box" style="display:none"></div>
     </div>
 
     <div class="tabs">
@@ -561,16 +582,144 @@
   // ===================== Live state dari TV =====================
   var PRAYER_ORDER_1 = ['Imsak','Shubuh','Syuruq','Dhuha'];
   var PRAYER_ORDER_2 = ['Dzuhur','Ashar','Maghrib','Isya'];
+  var SIMPLE_PRAYERS = ['Imsak','Syuruq','Dhuha'];
+
+  var currentPrayerKey = null;
+  var latestPrayerTimes = {};
+  var latestPrayerOffsets = {};
+  var latestPrayerSettings = {};
+
+  function pad2(n){ return (n<10?'0':'')+n; }
+  function addMinsCtrl(timeStr, offset){
+    var parts = (timeStr||'00:00').split(':');
+    var h = parseInt(parts[0],10) || 0, m = parseInt(parts[1],10) || 0;
+    var t = h*60 + m + offset;
+    t = ((t % 1440) + 1440) % 1440;
+    return pad2(Math.floor(t/60)) + ':' + pad2(t%60);
+  }
+  function getAdjTimeCtrl(key){
+    return addMinsCtrl(latestPrayerTimes[key] || '00:00', latestPrayerOffsets[key] || 0);
+  }
+  function prayerLabel(key){
+    return (key === 'Dzuhur' && new Date().getDay() === 5) ? "Jum'at" : key;
+  }
 
   function renderPrayerStrip(times){
-    times = times || {};
+    latestPrayerTimes = times || {};
     function build(order){
       return order.map(function(k){
-        return '<div class="p-item"><div class="pn">'+k+'</div><div class="pt">'+(times[k]||'--:--')+'</div></div>';
+        return '<div class="p-item" data-key="'+k+'"><div class="pn">'+prayerLabel(k)+'</div><div class="pt">'+getAdjTimeCtrl(k)+'</div></div>';
       }).join('');
     }
     $('prayer-strip-1').innerHTML = build(PRAYER_ORDER_1);
     $('prayer-strip-2').innerHTML = build(PRAYER_ORDER_2);
+
+    document.querySelectorAll('.p-item').forEach(function(el){
+      el.classList.toggle('active', el.dataset.key === currentPrayerKey);
+      el.addEventListener('click', function(){
+        var key = el.dataset.key;
+        if (currentPrayerKey === key){ closePrayerModal(); return; }
+        openPrayerModal(key);
+      });
+    });
+
+    // Kalau modal sedang terbuka, refresh waktu & offset-nya biar tetap sinkron
+    if (currentPrayerKey && $('pm-current-time')){
+      $('pm-current-time').textContent = getAdjTimeCtrl(currentPrayerKey);
+      if ($('pm-offset-val')) $('pm-offset-val').textContent = latestPrayerOffsets[currentPrayerKey] || 0;
+    }
+  }
+
+  function openPrayerModal(key){
+    currentPrayerKey = key;
+    var isJumat = new Date().getDay() === 5 && key === 'Dzuhur';
+    var label = isJumat ? "Jum'at" : key;
+    var st = latestPrayerSettings[key] || {};
+    var simple = SIMPLE_PRAYERS.indexOf(key) !== -1;
+
+    var html = '<div class="prayer-modal-title"><span>⏱ Pengaturan '+label+'</span><span class="close-x" id="pm-close">✕</span></div>';
+    html += '<div class="prayer-current-time" id="pm-current-time">'+getAdjTimeCtrl(key)+'</div>';
+
+    if (!simple && !isJumat){
+      html +=
+        '<div class="pm-field"><label>⏰ Countdown Sebelum Adzan (menit)</label>'+
+        '<input type="number" class="search-box" id="pm-countdown" min="0" value="'+(st.countdownBefore!=null?st.countdownBefore:'')+'" placeholder="Tidak aktif" style="margin-bottom:0"></div>'+
+        '<div class="pm-field"><label>🕌 Durasi Menunggu Iqamah (menit)</label>'+
+        '<input type="number" class="search-box" id="pm-iqamah" min="0" value="'+(st.iqamahDuration!=null?st.iqamahDuration:'')+'" placeholder="Tidak aktif" style="margin-bottom:0"></div>'+
+        '<div class="pm-field"><label>⚫ Durasi Overlay Hitam (menit)</label>'+
+        '<input type="number" class="search-box" id="pm-overlay" min="0" value="'+(st.overlayDuration!=null?st.overlayDuration:'')+'" placeholder="Tidak aktif" style="margin-bottom:0"></div>';
+    }
+    if (isJumat){
+      var jumatBefore = st.jumatBefore !== undefined ? st.jumatBefore : 5;
+      html +=
+        '<div class="pm-field"><label>⏱ Matikan Sebelum (menit)</label>'+
+        '<input type="number" class="search-box" id="pm-jumat-before" min="0" value="'+jumatBefore+'" style="margin-bottom:0"></div>'+
+        '<div class="pm-field"><label>⚫ Durasi Overlay Hitam Jum\'at (menit)</label>'+
+        '<input type="number" class="search-box" id="pm-overlay" min="0" value="'+(st.overlayDuration!=null?st.overlayDuration:'')+'" placeholder="Tidak aktif" style="margin-bottom:0"></div>';
+    }
+
+    html += '<div class="pm-field"><label>📝 Penyesuaian Manual (klik untuk kelipatan)</label>'+
+      '<div class="offset-row">'+
+      [-10,-5,-1].map(function(v){ return '<div class="offset-btn" data-off="'+v+'">'+v+'</div>'; }).join('')+
+      '<div class="offset-btn reset" data-off="reset">⟳ Reset</div>'+
+      [1,5,10].map(function(v){ return '<div class="offset-btn" data-off="'+v+'">+'+v+'</div>'; }).join('')+
+      '</div>'+
+      '<div class="sub" style="text-align:center">Offset saat ini: <b id="pm-offset-val">'+(latestPrayerOffsets[key]||0)+'</b> menit</div></div>';
+
+    if (!simple){
+      html += '<div class="chip" id="pm-save" style="text-align:center;margin-top:6px">💾 Simpan Pengaturan</div>';
+    }
+
+    var box = $('prayer-modal-box');
+    box.innerHTML = html;
+    box.style.display = 'block';
+
+    document.querySelectorAll('.p-item').forEach(function(el){
+      el.classList.toggle('active', el.dataset.key === key);
+    });
+
+    $('pm-close').addEventListener('click', closePrayerModal);
+
+    box.querySelectorAll('[data-off]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var v = this.dataset.off;
+        if (v === 'reset'){
+          sendValue('adjustPrayerOffset', { key: key, reset: true }, 'Offset ' + label + ' direset');
+          latestPrayerOffsets[key] = 0;
+        } else {
+          var n = parseInt(v, 10);
+          sendValue('adjustPrayerOffset', { key: key, minutes: n }, 'Offset ' + label + ' diubah');
+          latestPrayerOffsets[key] = (latestPrayerOffsets[key] || 0) + n;
+        }
+        $('pm-offset-val').textContent = latestPrayerOffsets[key];
+        $('pm-current-time').textContent = getAdjTimeCtrl(key);
+      });
+    });
+
+    var saveBtn = $('pm-save');
+    if (saveBtn){
+      saveBtn.addEventListener('click', function(){
+        var settings = {};
+        if (!simple && !isJumat){
+          settings.countdownBefore = $('pm-countdown').value;
+          settings.iqamahDuration = $('pm-iqamah').value;
+          settings.overlayDuration = $('pm-overlay').value;
+        }
+        if (isJumat){
+          settings.jumatBefore = $('pm-jumat-before').value;
+          settings.overlayDuration = $('pm-overlay').value;
+        }
+        sendValue('setPrayerSettings', { key: key, settings: settings }, 'Pengaturan ' + label + ' disimpan');
+      });
+    }
+  }
+
+  function closePrayerModal(){
+    currentPrayerKey = null;
+    var box = $('prayer-modal-box');
+    box.style.display = 'none';
+    box.innerHTML = '';
+    document.querySelectorAll('.p-item').forEach(function(el){ el.classList.remove('active'); });
   }
 
   function listenState(){
@@ -583,6 +732,8 @@
         suppressEcho = true;
 
         if (s.masjidName) $('masjid-name').textContent = s.masjidName;
+        latestPrayerOffsets = s.prayerOffsets || {};
+        latestPrayerSettings = s.prayerSettings || {};
         renderPrayerStrip(s.prayerTimes);
 
         $('tg-dhuha').checked = !!s.dhuhaEnabled;
