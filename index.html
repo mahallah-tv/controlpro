@@ -170,6 +170,17 @@
   .color-swatch{aspect-ratio:1;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,.15);}
   .alpha-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
   .alpha-row span{font-size:.72rem;color:var(--muted);white-space:nowrap;}
+
+  .divider-af{border:none;border-top:1px solid var(--line);margin:14px 0;}
+  .event-item-hp{display:flex;justify-content:space-between;align-items:center;gap:8px;
+    padding:10px 2px;border-bottom:1px solid var(--line);}
+  .event-item-hp .ei-info{flex:1;min-width:0;}
+  .event-item-hp .ei-name{font-size:.85rem;font-weight:600;}
+  .event-item-hp .ei-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+  .event-item-hp .ei-actions{display:flex;gap:6px;flex-shrink:0;}
+  .ei-btn{background:var(--panel);border:1px solid var(--line);color:var(--gold);border-radius:8px;
+    padding:6px 10px;font-size:.74rem;cursor:pointer;white-space:nowrap;}
+  .ei-btn.danger{color:var(--red);}
 </style>
 </head>
 <body>
@@ -334,6 +345,41 @@
 
     <!-- TAB: SEMUA FITUR (replika lengkap sidebar Pengaturan TV) -->
     <div class="tabpage" data-page="semua">
+
+      <!-- Data Masjid -->
+      <div class="acc" data-acc="masjid">
+        <div class="acc-head">🕌 Data Masjid</div>
+        <div class="acc-body">
+          <label class="f-label">Nama Masjid</label>
+          <input class="f-input" type="text" id="af-masjid-name" placeholder="Nama Masjid">
+          <label class="f-label">Kota / Lokasi</label>
+          <input class="f-input" type="text" id="af-masjid-location" placeholder="Kota">
+          <label class="f-label">Kota (untuk API waktu shalat)</label>
+          <select class="f-input" id="af-masjid-cityapi"></select>
+          <button class="btn-save-small" data-save="masjid">Simpan</button>
+        </div>
+      </div>
+
+      <!-- Hari Besar Islam -->
+      <div class="acc" data-acc="hari-besar">
+        <div class="acc-head">📅 Hari Besar Islam</div>
+        <div class="acc-body">
+          <div id="af-event-list"></div>
+          <hr class="divider-af">
+          <p class="f-note" id="af-event-form-label">➕ Tambah Hari Besar Baru</p>
+          <input type="hidden" id="af-event-edit-idx" value="-1">
+          <label class="f-label">Nama Acara</label>
+          <input class="f-input" type="text" id="af-event-name" placeholder="Nama hari besar">
+          <label class="f-label">Bulan Hijriyah (1-12)</label>
+          <input class="f-input" type="number" id="af-event-month" min="1" max="12" value="1">
+          <label class="f-label">Tanggal Hijriyah (1-30)</label>
+          <input class="f-input" type="number" id="af-event-day" min="1" max="30" value="1">
+          <div class="btn-grid cols2">
+            <div class="chip" id="af-event-reset">↺ Reset Form</div>
+            <div class="chip" id="af-event-save" style="background:var(--amber);color:#1a1206;font-weight:700">💾 Simpan</div>
+          </div>
+        </div>
+      </div>
 
       <!-- Kartu Adzan -->
       <div class="acc" data-acc="cards">
@@ -604,6 +650,65 @@
     { label: 'Putih', bg: 'linear-gradient(135deg,#eee 0%,#fff 100%)' }
   ];
 
+  // ── Konversi Hijriyah, disalin persis dari app.js (dipakai untuk hitung "X hari lagi") ──
+  var HIJRI_MONTHS = ['Muharram','Shafar',"Rabi'ul Awal","Rabi'ul Akhir",'Jumadil Awal','Jumadil Akhir','Rajab',"Sya'ban",'Ramadhan','Syawal','Dzulqa\'dah','Dzulhijjah'];
+
+  function toHijri(date){
+    var Y = date.getFullYear(), M = date.getMonth()+1, D = date.getDate();
+    var jd = Math.floor((14-M)/12);
+    var y = Y+4800-jd;
+    var m = M+12*jd-3;
+    var JDN = D+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+    var l = JDN-1948440+10632, n = Math.floor((l-1)/10631);
+    l = l-10631*n+354;
+    var j = Math.floor((10985-l)/5316)*Math.floor((50*l)/17719)+Math.floor(l/5670)*Math.floor((43*l)/15238);
+    l = l-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;
+    var hM = Math.floor((24*l)/709), hD = l-Math.floor((709*hM)/24), hY = 30*n+j-30;
+    return { y: hY, m: hM, d: hD };
+  }
+
+  function hijriToGreg(hY, hM, hD){
+    var jdn = Math.floor((11*hY+3)/30)+354*hY+30*hM-Math.floor((hM-1)/2)+hD+1948440-385;
+    var l = jdn+68569, n = Math.floor(4*l/146097);
+    l = l-Math.floor((146097*n+3)/4);
+    var i = Math.floor(4000*(l+1)/1461001);
+    l = l-Math.floor(1461*i/4)+31;
+    var j = Math.floor(80*l/2447);
+    var dd = l-Math.floor(2447*j/80);
+    l = Math.floor(j/11);
+    var mm = j+2-12*l, yy = 100*(n-49)+i+l;
+    return new Date(yy, mm-1, dd);
+  }
+
+  function renderEventListHP(events){
+    events = events || [];
+    var list = $('af-event-list');
+    if (!events.length){ list.innerHTML = '<p class="f-note">Belum ada hari besar. Tambahkan lewat form di bawah.</p>'; return; }
+    var now = new Date(); now.setHours(0,0,0,0);
+    var curH = toHijri(now);
+    list.innerHTML = events.map(function(ev, idx){
+      var gDate = hijriToGreg(curH.y, ev.hMonth, ev.hDay);
+      gDate.setHours(0,0,0,0);
+      if (gDate < now) gDate = hijriToGreg(curH.y+1, ev.hMonth, ev.hDay);
+      var days = Math.round((gDate - now) / 86400000);
+      return '<div class="event-item-hp"><div class="ei-info">'+
+        '<div class="ei-name">'+ev.name+'</div>'+
+        '<div class="ei-sub">'+ev.hDay+' '+HIJRI_MONTHS[ev.hMonth-1]+' • '+days+' hari lagi</div>'+
+        '</div><div class="ei-actions">'+
+        '<div class="ei-btn" data-editev="'+idx+'">✏ Edit</div>'+
+        '<div class="ei-btn danger" data-delev="'+idx+'">✕</div>'+
+        '</div></div>';
+    }).join('');
+  }
+
+  function resetEventForm(){
+    $('af-event-edit-idx').value = -1;
+    $('af-event-name').value = '';
+    $('af-event-month').value = 1;
+    $('af-event-day').value = 1;
+    $('af-event-form-label').textContent = '➕ Tambah Hari Besar Baru';
+  }
+
   function $(id){ return document.getElementById(id); }
   function showToast(msg){
     var t = $('toast');
@@ -748,8 +853,9 @@
   }
 
   function populateCitySelect(){
-    var sel = $('sel-city');
-    sel.innerHTML = CITY_LIST.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    var opts = CITY_LIST.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    $('sel-city').innerHTML = opts;
+    $('af-masjid-cityapi').innerHTML = opts;
   }
 
   function sendCommand(cmd){
@@ -895,6 +1001,11 @@
           : (s.overlayActive ? 'Layar hitam (manual)' : 'Jadwal otomatis: nonaktif');
 
         // ── Replika lengkap tab "Semua Fitur" ──
+        $('af-masjid-name').value = s.masjidName || '';
+        $('af-masjid-location').value = s.masjidLocation || '';
+        if (s.cityApi) $('af-masjid-cityapi').value = s.cityApi;
+        renderEventListHP(s.islamicEvents);
+
         $('af-dhuha').checked = !!s.dhuhaEnabled;
         $('af-jumat').checked = !!s.modeJumat;
 
@@ -1045,6 +1156,47 @@
       if (!pmbOpenKey) return;
       sendValue('commitPrayerSettings', { key: pmbOpenKey }, 'Pengaturan ' + pmbOpenKey + ' disimpan');
       closePmb();
+    });
+
+    // Data Masjid
+    document.querySelector('[data-save="masjid"]').addEventListener('click', function(){
+      sendValue('saveMasjidInfo', {
+        name: $('af-masjid-name').value,
+        location: $('af-masjid-location').value,
+        cityApi: $('af-masjid-cityapi').value
+      }, 'Data masjid disimpan');
+    });
+
+    // Hari Besar Islam
+    $('af-event-reset').addEventListener('click', resetEventForm);
+    $('af-event-save').addEventListener('click', function(){
+      var name = $('af-event-name').value.trim();
+      if (!name){ showToast('Nama hari besar wajib diisi'); return; }
+      var idx = parseInt($('af-event-edit-idx').value, 10);
+      sendValue('saveIslamicEvent', {
+        idx: idx,
+        name: name,
+        hMonth: parseInt($('af-event-month').value,10) || 1,
+        hDay: parseInt($('af-event-day').value,10) || 1
+      }, 'Hari besar disimpan');
+      resetEventForm();
+    });
+    $('af-event-list').addEventListener('click', function(e){
+      var editEl = e.target.closest('[data-editev]');
+      var delEl = e.target.closest('[data-delev]');
+      if (editEl){
+        var idx = parseInt(editEl.dataset.editev, 10);
+        var ev = ((lastState && lastState.islamicEvents) || [])[idx];
+        if (!ev) return;
+        $('af-event-edit-idx').value = idx;
+        $('af-event-name').value = ev.name;
+        $('af-event-month').value = ev.hMonth;
+        $('af-event-day').value = ev.hDay;
+        $('af-event-form-label').textContent = '✏ Edit: ' + ev.name;
+      } else if (delEl){
+        if (!confirm('Hapus hari besar ini?')) return;
+        sendValue('removeIslamicEvent', parseInt(delEl.dataset.delev, 10), 'Hari besar dihapus');
+      }
     });
 
     // Kartu Adzan (replika)
