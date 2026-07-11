@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kontrol Mahallah TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f172a; --bg2:#161f38; --panel:#1a2340; --panel2:#202b4d;
+    --gold:#FFD700; --amber:#F5A623; --text:#e8ecf7; --muted:#8a93b5;
+    --line:rgba(255,255,255,.09); --green:#4ade80; --red:#e35d5d;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;}
+  body{padding-bottom:40px;}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px 8px;}
+
+  /* ── Header ───────────────────────────────────── */
+  .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .hdr .brand{display:flex;align-items:center;gap:10px;}
+  .hdr .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+  .hdr .brand-dot.online{background:var(--green);box-shadow:0 0 8px var(--green);}
+  .hdr h1{font-size:1.05rem;font-weight:700;margin:0;}
+  .hdr .status-txt{font-size:.72rem;color:var(--muted);}
+  .btn-icon{background:var(--panel);border:1px solid var(--line);color:var(--text);
+    width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    font-size:1rem;cursor:pointer;}
+
+  /* ── Pairing screen ───────────────────────────── */
+  #pairing-screen{display:flex;flex-direction:column;align-items:center;text-align:center;
+    padding:60px 20px 20px;}
+  #pairing-screen .icon{font-size:2.6rem;margin-bottom:10px;}
+  #pairing-screen h2{font-size:1.25rem;margin:0 0 6px;}
+  #pairing-screen p{color:var(--muted);font-size:.88rem;margin:0 0 26px;max-width:340px;}
+  .code-input{display:flex;gap:8px;justify-content:center;margin-bottom:18px;}
+  .code-input input{width:44px;height:56px;text-align:center;font-size:1.6rem;font-weight:700;
+    font-family:'JetBrains Mono',monospace;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;color:var(--gold);outline:none;}
+  .code-input input:focus{border-color:var(--amber);}
+  .btn-primary{background:linear-gradient(135deg,var(--amber),#e08e14);color:#1a1206;border:none;
+    font-weight:700;font-size:.95rem;padding:14px 28px;border-radius:14px;cursor:pointer;width:100%;
+    max-width:280px;}
+  .btn-primary:disabled{opacity:.5;}
+  .pairing-error{color:var(--red);font-size:.82rem;margin-top:10px;min-height:18px;}
+
+  /* ── Main panel ───────────────────────────────── */
+  #main-screen{display:none;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;}
+  .card h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);
+    margin:0 0 12px;font-weight:700;}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;}
+  .row + .row{border-top:1px solid var(--line);}
+  .row .label{font-size:.9rem;}
+  .row .sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+
+  /* live prayer strip */
+  .prayer-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .prayer-strip.row2{margin-top:8px;}
+  .p-item{background:var(--panel2);border-radius:10px;padding:8px 4px;text-align:center;}
+  .p-item .pn{font-size:.62rem;color:var(--muted);text-transform:uppercase;}
+  .p-item .pt{font-size:.95rem;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:2px;}
+
+  /* toggle switch */
+  .switch{position:relative;width:46px;height:26px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;background:#3a3f55;border-radius:20px;cursor:pointer;transition:.2s;}
+  .slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:.2s;}
+  input:checked + .slider{background:var(--amber);}
+  input:checked + .slider:before{transform:translateX(20px);}
+
+  /* button grid */
+  .btn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .btn-grid.cols2{grid-template-columns:repeat(2,1fr);}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:11px 6px;font-size:.82rem;text-align:center;cursor:pointer;
+    font-weight:500;}
+  .chip.active{background:rgba(245,166,35,.22);border-color:var(--amber);color:#ffd88a;font-weight:700;}
+  .chip:active{transform:scale(.96);}
+
+  /* slider control */
+  .slider-row{padding:10px 0;}
+  .slider-row .sr-top{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:8px;}
+  .slider-row .sr-top b{color:var(--gold);font-family:'JetBrains Mono',monospace;}
+  input[type=range]{width:100%;accent-color:var(--amber);}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;}
+  .tab{flex-shrink:0;background:var(--panel);border:1px solid var(--line);color:var(--muted);
+    padding:8px 14px;border-radius:20px;font-size:.8rem;cursor:pointer;font-weight:600;}
+  .tab.active{background:var(--amber);color:#1a1206;border-color:var(--amber);}
+  .tabpage{display:none;}
+  .tabpage.active{display:block;}
+
+  /* catalog / advanced search */
+  .search-box{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:11px 14px;color:var(--text);font-size:.9rem;margin-bottom:12px;outline:none;}
+  .cat-list{max-height:none;}
+  .cat-item{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;
+    border-bottom:1px solid var(--line);}
+  .cat-item .cat-label{font-size:.86rem;}
+  .cat-item .cat-code{font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .cat-btn{background:var(--panel2);border:1px solid var(--line);color:var(--gold);
+    padding:7px 14px;border-radius:9px;font-size:.78rem;cursor:pointer;font-weight:600;white-space:nowrap;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:#111827;border:1px solid var(--line);color:#fff;padding:10px 18px;
+    border-radius:12px;font-size:.85rem;opacity:0;pointer-events:none;transition:.25s;z-index:999;
+    max-width:90vw;text-align:center;}
+  .toast.show{opacity:1;bottom:30px;}
+
+  .unpair-link{display:block;text-align:center;color:var(--red);font-size:.78rem;
+    margin-top:6px;cursor:pointer;text-decoration:underline;opacity:.8;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="brand">
+      <div class="brand-dot" id="online-dot"></div>
+      <div>
+        <h1 id="masjid-name">Kontrol Mahallah TV</h1>
+        <div class="status-txt" id="status-txt">Menghubungkan...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PAIRING SCREEN ══════════ -->
+  <div id="pairing-screen">
+    <div class="icon">📺</div>
+    <h2>Hubungkan ke TV</h2>
+    <p>Masukkan 6 digit kode yang tampil di layar TV, atau buka link dari hasil scan QR.</p>
+    <div class="code-input" id="code-input">
+      <input type="tel" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1" inputmode="numeric">
+    </div>
+    <button class="btn-primary" id="btn-pair" disabled>Hubungkan</button>
+    <div class="pairing-error" id="pairing-error"></div>
+  </div>
+
+  <!-- ══════════ MAIN CONTROL SCREEN ══════════ -->
+  <div id="main-screen">
+
+    <div class="card">
+      <h3>Waktu Sholat Hari Ini</h3>
+      <div class="prayer-strip" id="prayer-strip-1"></div>
+      <div class="prayer-strip row2" id="prayer-strip-2"></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="umum">Umum</div>
+      <div class="tab" data-tab="tampilan">Tampilan</div>
+      <div class="tab" data-tab="audio">Audio</div>
+      <div class="tab" data-tab="lainnya">Lainnya</div>
+      <div class="tab" data-tab="semua">Semua Fitur</div>
+    </div>
+
+    <!-- TAB: UMUM -->
+    <div class="tabpage active" data-page="umum">
+      <div class="card">
+        <h3>Kota / Lokasi Waktu Sholat</h3>
+        <select class="search-box" id="sel-city" style="margin-bottom:0;"></select>
+      </div>
+      <div class="card">
+        <h3>Template Layout</h3>
+        <div class="btn-grid" id="tpl-buttons">
+          <div class="chip" data-tpl="default">Default</div>
+          <div class="chip" data-tpl="cardkiri">Card Kiri</div>
+          <div class="chip" data-tpl="cardatas">Card Atas</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div><div class="label">Mode Dhuha</div><div class="sub">Tampilkan card waktu Dhuha</div></div>
+          <label class="switch"><input type="checkbox" id="tg-dhuha"><span class="slider"></span></label>
+        </div>
+        <div class="row">
+          <div><div class="label">Mode Jum'at</div><div class="sub">Label Dzuhur → Jum'at otomatis</div></div>
+          <label class="switch"><input type="checkbox" id="tg-jumat"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: TAMPILAN -->
+    <div class="tabpage" data-page="tampilan">
+      <div class="card">
+        <h3>Ukuran Font Universal</h3>
+        <div class="slider-row">
+          <div class="sr-top"><span>Skala Font</span><b id="val-font">100%</b></div>
+          <input type="range" min="50" max="200" step="5" id="rg-font">
+        </div>
+      </div>
+      <div class="card">
+        <h3>Posisi Popup Notifikasi</h3>
+        <div class="btn-grid cols2" id="popup-pos-buttons" style="margin-bottom:14px;">
+          <div class="chip" data-pos="left">Kiri</div>
+          <div class="chip" data-pos="center">Tengah</div>
+          <div class="chip" data-pos="right">Kanan</div>
+          <div class="chip" id="btn-preview-popup">👁 Pratinjau</div>
+        </div>
+        <div class="slider-row">
+          <div class="sr-top"><span>Ukuran Popup</span><b id="val-popup">100%</b></div>
+          <input type="range" min="50" max="200" step="5" id="rg-popup">
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: AUDIO -->
+    <div class="tabpage" data-page="audio">
+      <div class="card">
+        <div class="row">
+          <div class="label">🔇 Mute Semua Audio</div>
+          <label class="switch"><input type="checkbox" id="tg-mute"><span class="slider"></span></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Volume</h3>
+        <div class="slider-row">
+          <div class="sr-top"><span>Pra-Adzan</span><b id="val-vol-pre">100%</b></div>
+          <input type="range" min="0" max="100" step="5" id="rg-vol-pre">
+        </div>
+        <div class="slider-row">
+          <div class="sr-top"><span>Adzan</span><b id="val-vol-adzan">100%</b></div>
+          <input type="range" min="0" max="100" step="5" id="rg-vol-adzan">
+        </div>
+        <div class="slider-row">
+          <div class="sr-top"><span>Alarm</span><b id="val-vol-alarm">100%</b></div>
+          <input type="range" min="0" max="100" step="5" id="rg-vol-alarm">
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: LAINNYA -->
+    <div class="tabpage" data-page="lainnya">
+      <div class="card">
+        <h3>Mode Sleep (Layar Hitam)</h3>
+        <div class="btn-grid cols2">
+          <div class="chip" id="btn-sleep-on">🌑 Nyalakan</div>
+          <div class="chip" id="btn-sleep-off">🌕 Matikan</div>
+        </div>
+        <div class="sub" style="margin-top:10px;text-align:center;" id="sleep-status">–</div>
+      </div>
+      <div class="card">
+        <h3>Live Kamera / Kajian</h3>
+        <div class="btn-grid cols2">
+          <div class="chip" data-cam="1">Kamera 1</div>
+          <div class="chip" data-cam="2">Kamera 2</div>
+          <div class="chip" data-cam="3">Kamera 3</div>
+          <div class="chip" data-cam="4">Kamera 4</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: SEMUA FITUR (katalog otomatis dari TV) -->
+    <div class="tabpage" data-page="semua">
+      <div class="card">
+        <h3>Cari &amp; Jalankan Fitur Apapun</h3>
+        <input class="search-box" id="cat-search" placeholder="Cari fitur... contoh: donasi, kajian, tema">
+        <div class="cat-list" id="cat-list">
+          <div class="sub">Memuat daftar fitur dari TV...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="unpair-link" id="btn-unpair">Putuskan koneksi dari TV ini</div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase (versi compat, kompatibel browser lama juga) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ── Ganti sesuai project Firebase Anda (harus SAMA dengan yang di TV) ──
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAsgeM5Bh-imX7495mMJ1JJ-AkuyrzmA7c",
+    authDomain: "mahallahtvpro.firebaseapp.com",
+    projectId: "mahallahtvpro",
+    storageBucket: "mahallahtvpro.firebasestorage.app",
+    messagingSenderId: "1064313843618",
+    appId: "1:1064313843618:web:53f8261478f8301cfdccfb"
+  };
+
+  firebase.initializeApp(FIREBASE_CONFIG);
+  var db = firebase.firestore();
+  var FieldValue = firebase.firestore.FieldValue;
+
+  var LS_DEVICE = 'ctrl_deviceId';
+  var deviceId = null;
+  var commandsRef = null;
+  var suppressEcho = false; // hindari slider "melompat" saat kita sendiri yang mengubah
+
+  var CITY_LIST = ["Jakarta","Bogor","Depok","Tangerang","Bekasi","Bandung","Cimahi","Garut","Tasikmalaya","Cirebon","Sukabumi","Sumedang","Cianjur","Purwakarta","Karawang","Subang","Majalengka","Kuningan","Indramayu","Semarang","Solo","Yogyakarta","Magelang","Salatiga","Pekalongan","Tegal","Purwokerto","Cilacap","Banyumas","Kebumen","Purworejo","Wonosobo","Kudus","Jepara","Demak","Grobogan","Rembang","Blora","Pati","Kendal","Batang","Pemalang","Brebes","Surabaya","Malang","Sidoarjo","Gresik","Mojokerto","Pasuruan","Probolinggo","Jember","Banyuwangi","Kediri","Blitar","Tulungagung","Madiun","Nganjuk","Jombang","Bojonegoro","Tuban","Lamongan","Bangkalan","Pamekasan","Sumenep","Bondowoso","Situbondo","Lumajang","Medan","Binjai","Pematangsiantar","Tebing Tinggi","Kisaran","Padangsidempuan","Aceh","Sabang","Lhokseumawe","Langsa","Padang","Bukittinggi","Payakumbuh","Solok","Sawahlunto","Pekanbaru","Dumai","Batam","Tanjungpinang","Jambi","Palembang","Prabumulih","Lubuklinggau","Bengkulu","Bandar Lampung","Metro","Pontianak","Singkawang","Palangkaraya","Banjarmasin","Banjarbaru","Balikpapan","Samarinda","Bontang","Tarakan","Nunukan","Makassar","Parepare","Palopo","Kendari","Baubau","Palu","Gorontalo","Manado","Bitung","Tomohon","Kotamobagu","Ambon","Ternate","Tidore","Denpasar","Singaraja","Mataram","Bima","Kupang","Ende","Jayapura","Sorong","Merauke","Manokwari"].sort();
+
+  function $(id){ return document.getElementById(id); }
+  function showToast(msg){
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  // ===================== Pairing =====================
+  function initCodeInputs(){
+    var inputs = document.querySelectorAll('#code-input input');
+    inputs.forEach(function(inp, idx){
+      inp.addEventListener('input', function(){
+        inp.value = inp.value.replace(/[^0-9]/g,'');
+        if (inp.value && idx < inputs.length - 1) inputs[idx+1].focus();
+        checkCodeComplete();
+      });
+      inp.addEventListener('keydown', function(e){
+        if (e.key === 'Backspace' && !inp.value && idx > 0) inputs[idx-1].focus();
+      });
+    });
+  }
+
+  function checkCodeComplete(){
+    var inputs = document.querySelectorAll('#code-input input');
+    var code = '';
+    inputs.forEach(function(i){ code += i.value; });
+    $('btn-pair').disabled = code.length !== 6;
+    return code;
+  }
+
+  function getEnteredCode(){
+    var inputs = document.querySelectorAll('#code-input input');
+    var code = '';
+    inputs.forEach(function(i){ code += i.value; });
+    return code;
+  }
+
+  function fillCodeInputs(code){
+    var inputs = document.querySelectorAll('#code-input input');
+    for (var i=0;i<inputs.length && i<code.length;i++) inputs[i].value = code[i];
+    checkCodeComplete();
+  }
+
+  function attemptPair(code){
+    $('pairing-error').textContent = '';
+    $('btn-pair').disabled = true;
+    $('btn-pair').textContent = 'Menghubungkan...';
+
+    db.collection('pairing').doc(code).get().then(function(snap){
+      var data = snap.exists ? snap.data() : null;
+      if (!data || !data.deviceId){
+        $('pairing-error').textContent = 'Kode tidak valid atau sudah kedaluwarsa.';
+        $('btn-pair').disabled = false;
+        $('btn-pair').textContent = 'Hubungkan';
+        return;
+      }
+      deviceId = data.deviceId;
+      return db.collection('devices').doc(deviceId).set({
+        paired: true,
+        pairedAt: FieldValue.serverTimestamp()
+      }, { merge: true }).then(function(){
+        localStorage.setItem(LS_DEVICE, deviceId);
+        showToast('Berhasil terhubung ✓');
+        enterMainScreen();
+      });
+    }).catch(function(err){
+      console.error(err);
+      $('pairing-error').textContent = 'Gagal terhubung. Cek koneksi internet.';
+      $('btn-pair').disabled = false;
+      $('btn-pair').textContent = 'Hubungkan';
+    });
+  }
+
+  function unpair(){
+    if (!deviceId) return;
+    if (!confirm('Putuskan koneksi dari TV ini? Anda perlu memasukkan kode baru untuk terhubung lagi.')) return;
+    db.collection('devices').doc(deviceId).set({ paired: false }, { merge: true }).then(function(){
+      localStorage.removeItem(LS_DEVICE);
+      location.reload();
+    });
+  }
+
+  // ===================== Main Screen =====================
+  function enterMainScreen(){
+    $('pairing-screen').style.display = 'none';
+    $('main-screen').style.display = 'block';
+    populateCitySelect();
+    attachControlHandlers();
+    listenState();
+  }
+
+  function populateCitySelect(){
+    var sel = $('sel-city');
+    sel.innerHTML = CITY_LIST.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+  }
+
+  function sendCommand(cmd){
+    if (!deviceId) return;
+    cmd.createdAt = FieldValue.serverTimestamp();
+    db.collection('devices').doc(deviceId).collection('commands').add(cmd);
+  }
+
+  function sendCode(code, label){
+    sendCommand({ kind:'code', code: String(code) });
+    if (label) showToast('📤 ' + label);
+  }
+  function sendValue(action, payload, label){
+    sendCommand({ kind:'value', action: action, payload: payload });
+    if (label) showToast('📤 ' + label);
+  }
+
+  // ===================== Live state dari TV =====================
+  var PRAYER_ORDER_1 = ['Imsak','Shubuh','Syuruq','Dhuha'];
+  var PRAYER_ORDER_2 = ['Dzuhur','Ashar','Maghrib','Isya'];
+
+  function renderPrayerStrip(times){
+    times = times || {};
+    function build(order){
+      return order.map(function(k){
+        return '<div class="p-item"><div class="pn">'+k+'</div><div class="pt">'+(times[k]||'--:--')+'</div></div>';
+      }).join('');
+    }
+    $('prayer-strip-1').innerHTML = build(PRAYER_ORDER_1);
+    $('prayer-strip-2').innerHTML = build(PRAYER_ORDER_2);
+  }
+
+  function listenState(){
+    db.collection('devices').doc(deviceId).onSnapshot(function(snap){
+      var doc = snap.data();
+      if (!doc) return;
+
+      var s = doc.state;
+      if (s){
+        suppressEcho = true;
+
+        if (s.masjidName) $('masjid-name').textContent = s.masjidName;
+        renderPrayerStrip(s.prayerTimes);
+
+        $('tg-dhuha').checked = !!s.dhuhaEnabled;
+        $('tg-jumat').checked = !!s.modeJumat;
+        $('tg-mute').checked = !!s.muteAll;
+
+        if (s.cityApi) $('sel-city').value = s.cityApi;
+
+        document.querySelectorAll('#tpl-buttons .chip').forEach(function(c){
+          c.classList.toggle('active', c.dataset.tpl === (s.template||'default'));
+        });
+        document.querySelectorAll('#popup-pos-buttons .chip[data-pos]').forEach(function(c){
+          c.classList.toggle('active', c.dataset.pos === (s.popupPosition||'right'));
+        });
+
+        $('rg-font').value = s.globalFontScale || 100;
+        $('val-font').textContent = (s.globalFontScale||100) + '%';
+        $('rg-popup').value = s.popupScale || 100;
+        $('val-popup').textContent = (s.popupScale||100) + '%';
+
+        var av = s.audioVolume || {};
+        $('rg-vol-pre').value = av['pre-adzan'] != null ? av['pre-adzan'] : 100;
+        $('val-vol-pre').textContent = ($('rg-vol-pre').value) + '%';
+        $('rg-vol-adzan').value = av['adzan'] != null ? av['adzan'] : 100;
+        $('val-vol-adzan').textContent = ($('rg-vol-adzan').value) + '%';
+        $('rg-vol-alarm').value = av['alarm'] != null ? av['alarm'] : 100;
+        $('val-vol-alarm').textContent = ($('rg-vol-alarm').value) + '%';
+
+        $('sleep-status').textContent = s.sleepModeEnabled
+          ? ('Jadwal otomatis: AKTIF' + (s.overlayActive ? ' • Layar sedang HITAM' : ''))
+          : (s.overlayActive ? 'Layar hitam (manual)' : 'Jadwal otomatis: nonaktif');
+
+        setTimeout(function(){ suppressEcho = false; }, 50);
+      }
+
+      // Status online: TV dianggap online kalau lastSeenTv < 45 detik lalu
+      var ts = doc.lastSeenTv;
+      var ms = ts && typeof ts.toMillis === 'function' ? ts.toMillis() : null;
+      var online = ms && (Date.now() - ms) < 45000;
+      $('online-dot').classList.toggle('online', !!online);
+      $('status-txt').textContent = online ? 'TV terhubung' : 'TV tidak terdeteksi (cek koneksi TV)';
+
+      // Katalog fitur (list kode dari remote-codes.js, dipublikasikan TV)
+      renderCatalog(doc.catalog || []);
+    });
+  }
+
+  var fullCatalog = [];
+  function renderCatalog(list){
+    fullCatalog = list;
+    doFilterCatalog($('cat-search').value || '');
+  }
+
+  function doFilterCatalog(q){
+    q = q.toLowerCase().trim();
+    var filtered = fullCatalog.filter(function(item){
+      return !q || item.label.toLowerCase().indexOf(q) !== -1 || item.code.indexOf(q) !== -1;
+    });
+    var html = filtered.map(function(item){
+      return '<div class="cat-item"><div><div class="cat-label">'+item.label+'</div>'+
+        '<div class="cat-code">Kode '+item.code+'</div></div>'+
+        '<div class="cat-btn" data-run="'+item.code+'" data-label="'+item.label.replace(/"/g,'&quot;')+'">Jalankan</div></div>';
+    }).join('');
+    $('cat-list').innerHTML = html || '<div class="sub">Tidak ditemukan.</div>';
+  }
+
+  // ===================== Event handlers UI =====================
+  function attachControlHandlers(){
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+        document.querySelectorAll('.tabpage').forEach(function(p){ p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.querySelector('.tabpage[data-page="'+tab.dataset.tab+'"]').classList.add('active');
+      });
+    });
+
+    $('sel-city').addEventListener('change', function(){
+      sendValue('setCity', this.value, 'Kota: ' + this.value);
+    });
+
+    document.querySelectorAll('#tpl-buttons .chip').forEach(function(c){
+      c.addEventListener('click', function(){
+        sendValue('setTemplate', c.dataset.tpl, 'Template: ' + c.textContent);
+      });
+    });
+
+    $('tg-dhuha').addEventListener('change', function(){
+      if (suppressEcho) return;
+      sendValue('setDhuha', this.checked, this.checked ? 'Dhuha aktif' : 'Dhuha nonaktif');
+    });
+    $('tg-jumat').addEventListener('change', function(){
+      if (suppressEcho) return;
+      sendValue('setModeJumat', this.checked, "Mode Jum'at diubah");
+    });
+    $('tg-mute').addEventListener('change', function(){
+      if (suppressEcho) return;
+      sendValue('toggleMute', null, 'Mute audio diubah');
+    });
+
+    $('rg-font').addEventListener('input', function(){ $('val-font').textContent = this.value + '%'; });
+    $('rg-font').addEventListener('change', function(){ sendValue('setFontScale', parseInt(this.value,10), 'Ukuran font: '+this.value+'%'); });
+
+    $('rg-popup').addEventListener('input', function(){ $('val-popup').textContent = this.value + '%'; });
+    $('rg-popup').addEventListener('change', function(){ sendValue('setPopupScale', parseInt(this.value,10), 'Ukuran popup: '+this.value+'%'); });
+
+    document.querySelectorAll('#popup-pos-buttons .chip[data-pos]').forEach(function(c){
+      c.addEventListener('click', function(){
+        sendValue('setPopupPosition', c.dataset.pos, 'Posisi popup: ' + c.textContent);
+      });
+    });
+    $('btn-preview-popup').addEventListener('click', function(){
+      sendValue('previewPopup', null, 'Pratinjau popup dikirim');
+    });
+
+    ['pre','adzan','alarm'].forEach(function(type){
+      var key = type === 'pre' ? 'pre-adzan' : type;
+      var rg = $('rg-vol-'+type), val = $('val-vol-'+type);
+      rg.addEventListener('input', function(){ val.textContent = this.value + '%'; });
+      rg.addEventListener('change', function(){
+        sendValue('setVolume', { type:key, value: parseInt(this.value,10) }, 'Volume ' + key + ': ' + this.value + '%');
+      });
+    });
+
+    $('btn-sleep-on').addEventListener('click', function(){ sendValue('sleepManual', true, 'Layar dihitamkan'); });
+    $('btn-sleep-off').addEventListener('click', function(){ sendValue('sleepManual', false, 'Layar dinyalakan'); });
+
+    document.querySelectorAll('[data-cam]').forEach(function(c){
+      c.addEventListener('click', function(){ sendValue('switchCamera', c.dataset.cam, 'Ganti ke Kamera ' + c.dataset.cam); });
+    });
+
+    $('cat-search').addEventListener('input', function(){ doFilterCatalog(this.value); });
+    $('cat-list').addEventListener('click', function(e){
+      var btn = e.target.closest('[data-run]');
+      if (!btn) return;
+      sendCode(btn.dataset.run, btn.dataset.label);
+    });
+
+    $('btn-unpair').addEventListener('click', unpair);
+  }
+
+  // ===================== Boot =====================
+  function boot(){
+    initCodeInputs();
+    $('btn-pair').addEventListener('click', function(){
+      var code = getEnteredCode();
+      if (code.length === 6) attemptPair(code);
+    });
+
+    var params = new URLSearchParams(location.search);
+    var pairParam = params.get('pair');
+    var savedId = localStorage.getItem(LS_DEVICE);
+
+    if (savedId){
+      deviceId = savedId;
+      // Validasi masih paired
+      db.collection('devices').doc(deviceId).get().then(function(snap){
+        var data = snap.exists ? snap.data() : null;
+        if (data && data.paired === true){
+          enterMainScreen();
+        } else {
+          localStorage.removeItem(LS_DEVICE);
+          deviceId = null;
+          if (pairParam) fillCodeInputs(pairParam);
+        }
+      }).catch(function(){
+        // offline: coba tetap masuk, akan sinkron begitu online
+        enterMainScreen();
+      });
+    } else if (pairParam && /^[0-9]{6}$/.test(pairParam)){
+      fillCodeInputs(pairParam);
+      attemptPair(pairParam);
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
