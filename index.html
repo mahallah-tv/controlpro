@@ -202,6 +202,9 @@
   .media-list-item audio{max-width:150px;height:32px;flex-shrink:0;}
   .media-no-preview{font-size:.68rem;color:var(--muted);flex-shrink:0;white-space:nowrap;}
   .media-empty{font-size:.76rem;color:var(--muted);padding:4px 0;}
+  .media-del-btn{flex-shrink:0;background:var(--panel);border:1px solid var(--line);color:var(--red);
+    width:28px;height:28px;border-radius:8px;font-size:.85rem;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;}
   .cfg-status{font-size:.75rem;margin-top:8px;padding:8px 10px;border-radius:8px;}
   .cfg-status.ok{background:rgba(74,222,128,.12);color:var(--green);}
   .cfg-status.missing{background:rgba(227,93,93,.12);color:var(--red);}
@@ -590,7 +593,15 @@
           </div>
           <label class="f-label">Judul Donasi</label>
           <input class="f-input" type="text" id="af-donasi-judul" placeholder="Contoh: Donasi Masjid">
-          <p class="f-note">Upload QR Code hanya bisa langsung di TV.</p>
+          <label class="f-label">Gambar QR Code</label>
+          <div class="file-upload-row">
+            <div class="file-btn" id="af-btn-upload-donasi-qr">
+              📤 Pilih Gambar QR
+              <input type="file" id="af-file-donasi-qr" accept="image/*">
+            </div>
+          </div>
+          <div class="upload-progress" id="af-progress-donasi-qr"></div>
+          <div class="media-list" id="af-list-donasi-qr"><div class="media-empty">Memuat...</div></div>
           <label class="f-label">Deskripsi</label>
           <textarea class="f-input" id="af-donasi-desc" rows="2" placeholder="Contoh: BCA 1234567890 a.n. Masjid..."></textarea>
           <button class="btn-save-small" data-save="donasi">Simpan</button>
@@ -1345,11 +1356,14 @@
       var thumbHtml = it.thumb
         ? '<img class="media-thumb" src="' + it.thumb + '" alt="preview">'
         : '<div class="media-thumb-placeholder">🖼️</div>';
-      return '<div class="media-list-item">' + thumbHtml + '<span class="nm">' + escapeHtml(it.name) + '</span></div>';
+      return '<div class="media-list-item">' + thumbHtml +
+        '<span class="nm">' + escapeHtml(it.name) + '</span>' +
+        '<div class="media-del-btn" data-delkind="image" data-delid="' + escapeHtml(it.id) + '">✕</div>' +
+        '</div>';
     }).join('');
   }
 
-  function renderAudioMediaList(elId, items){
+  function renderAudioMediaList(elId, items, type){
     var el = $(elId);
     if (!el) return;
     if (!items || !items.length){
@@ -1360,17 +1374,99 @@
       var playerHtml = it.url
         ? '<audio controls preload="none" src="' + it.url + '"></audio>'
         : '<span class="media-no-preview">tanpa pratinjau</span>';
-      return '<div class="media-list-item"><span class="nm">' + escapeHtml(it.name) + '</span>' + playerHtml + '</div>';
+      return '<div class="media-list-item"><span class="nm">' + escapeHtml(it.name) + '</span>' + playerHtml +
+        '<div class="media-del-btn" data-delkind="audio" data-deltarget="' + type + '" data-delid="' + escapeHtml(it.id) + '">✕</div>' +
+        '</div>';
     }).join('');
+  }
+
+  function renderDonasiQrMedia(donasiQr){
+    var el = $('af-list-donasi-qr');
+    if (!el) return;
+    donasiQr = donasiQr || {};
+    if (!donasiQr.hasFile){
+      el.innerHTML = '<div class="media-empty">Belum ada gambar QR.</div>';
+      return;
+    }
+    var thumbHtml = donasiQr.thumb
+      ? '<img class="media-thumb" src="' + donasiQr.thumb + '" alt="preview">'
+      : '<div class="media-thumb-placeholder">🖼️</div>';
+    el.innerHTML = '<div class="media-list-item">' + thumbHtml +
+      '<span class="nm">QR Donasi aktif</span>' +
+      '<div class="media-del-btn" data-delkind="image" data-deltarget="donasiQr">✕</div>' +
+      '</div>';
   }
 
   function renderMediaLists(summary){
     summary = summary || {};
     renderBgMediaList('af-list-bg', summary.backgrounds);
     var audio = summary.audio || {};
-    renderAudioMediaList('af-list-audio-adzan', audio['adzan']);
-    renderAudioMediaList('af-list-audio-pre-adzan', audio['pre-adzan']);
-    renderAudioMediaList('af-list-audio-alarm', audio['alarm']);
+    renderAudioMediaList('af-list-audio-adzan', audio['adzan'], 'adzan');
+    renderAudioMediaList('af-list-audio-pre-adzan', audio['pre-adzan'], 'pre-adzan');
+    renderAudioMediaList('af-list-audio-alarm', audio['alarm'], 'alarm');
+    renderDonasiQrMedia(summary.donasiQr);
+  }
+
+  function handleDonasiQrFile(input){
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (!cloudinaryConfig.cloudName || !cloudinaryConfig.uploadPreset){
+      showToast('⚠ Atur Cloudinary dulu di kartu "Upload Media"');
+      input.value = '';
+      return;
+    }
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024){
+      showToast('❌ File terlalu besar (maks ' + MAX_IMAGE_MB + 'MB)');
+      input.value = '';
+      return;
+    }
+    var progressEl = $('af-progress-donasi-qr');
+    var btn = $('af-btn-upload-donasi-qr');
+    btn.classList.add('uploading');
+    progressEl.classList.add('show');
+    progressEl.textContent = 'Mengupload ' + file.name + '... 0%';
+
+    function resetUploadUi(){
+      btn.classList.remove('uploading');
+      progressEl.classList.remove('show');
+      input.value = '';
+    }
+
+    uploadToCloudinary(file, function(pct){
+      progressEl.textContent = 'Mengupload ' + file.name + '... ' + pct + '%';
+    }).then(function(url){
+      sendValue('addMediaFromUrl', { url: url, name: file.name, kind: 'image', target: 'donasiQr' });
+      showToast('QR Donasi terkirim ke TV ✓');
+      resetUploadUi();
+    }).catch(function(err){
+      console.error(err);
+      showToast('❌ Gagal upload QR donasi');
+      resetUploadUi();
+    });
+  }
+
+  function handleDeleteMediaClick(e){
+    var btn = e.target.closest('[data-delkind]');
+    if (!btn) return;
+    var kind = btn.dataset.delkind;
+    var target = btn.dataset.deltarget;
+    var id = btn.dataset.delid;
+
+    if (kind === 'image' && target === 'donasiQr'){
+      if (!confirm('Hapus gambar QR Donasi ini?')) return;
+      sendValue('deleteMedia', { kind: 'image', target: 'donasiQr' }, 'QR Donasi dihapus');
+      return;
+    }
+    if (kind === 'image'){
+      if (!confirm('Hapus background ini?')) return;
+      sendValue('deleteMedia', { kind: 'image', id: id }, 'Background dihapus');
+      return;
+    }
+    if (kind === 'audio'){
+      if (!confirm('Hapus audio ini?')) return;
+      sendValue('deleteMedia', { kind: 'audio', target: target, id: id }, 'Audio dihapus');
+      return;
+    }
   }
 
   // ===================== Event handlers UI =====================
@@ -1450,6 +1546,10 @@
     $('af-btn-save-cloudinary').addEventListener('click', saveCloudinaryConfig);
     $('af-file-bg').addEventListener('change', function(){ handleBackgroundFiles(this); });
     $('af-file-audio').addEventListener('change', function(){ handleAudioFile(this); });
+    $('af-file-donasi-qr').addEventListener('change', function(){ handleDonasiQrFile(this); });
+
+    // Hapus media (background/audio/QR donasi) — delegasi event untuk semua tombol ✕ di tab Semua Fitur
+    document.querySelector('.tabpage[data-page="semua"]').addEventListener('click', handleDeleteMediaClick);
 
     // Hari Besar Islam
     $('af-event-reset').addEventListener('click', resetEventForm);
