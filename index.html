@@ -181,6 +181,25 @@
   .ei-btn{background:var(--panel);border:1px solid var(--line);color:var(--gold);border-radius:8px;
     padding:6px 10px;font-size:.74rem;cursor:pointer;white-space:nowrap;}
   .ei-btn.danger{color:var(--red);}
+
+  /* ── Media upload (Cloudinary) ───────────────────── */
+  .file-upload-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+  .file-btn{flex-shrink:0;background:var(--panel2);border:1px solid var(--line);color:var(--gold);
+    padding:11px 16px;border-radius:10px;font-size:.82rem;cursor:pointer;font-weight:600;
+    text-align:center;position:relative;overflow:hidden;width:100%;}
+  .file-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
+  .file-btn.uploading{opacity:.6;pointer-events:none;}
+  .upload-progress{font-size:.75rem;color:var(--amber);margin-top:8px;display:none;}
+  .upload-progress.show{display:block;}
+  .media-list{margin-top:10px;}
+  .media-list-item{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text);
+    padding:7px 0;border-top:1px solid var(--line);}
+  .media-list-item:first-child{border-top:none;}
+  .media-list-item .nm{flex:1;word-break:break-word;}
+  .media-empty{font-size:.76rem;color:var(--muted);padding:4px 0;}
+  .cfg-status{font-size:.75rem;margin-top:8px;padding:8px 10px;border-radius:8px;}
+  .cfg-status.ok{background:rgba(74,222,128,.12);color:var(--green);}
+  .cfg-status.missing{background:rgba(227,93,93,.12);color:var(--red);}
 </style>
 </head>
 <body>
@@ -360,6 +379,21 @@
         </div>
       </div>
 
+      <!-- Upload Media (Cloudinary) -->
+      <div class="acc" data-acc="cloud">
+        <div class="acc-head">☁️ Upload Media (Cloudinary)</div>
+        <div class="acc-body">
+          <p class="f-note">Isi sekali saja. Data ini dipakai untuk mengirim gambar/audio dari HP langsung ke TV lewat kartu Background &amp; Audio di bawah.</p>
+          <label class="f-label">Cloud Name</label>
+          <input class="f-input" type="text" id="af-cf-cloud-name" placeholder="contoh: dxxxxxxxx">
+          <label class="f-label">Upload Preset (Unsigned)</label>
+          <input class="f-input" type="text" id="af-cf-upload-preset" placeholder="contoh: mahallahtv_unsigned">
+          <button class="btn-save-small" id="af-btn-save-cloudinary">💾 Simpan Pengaturan</button>
+          <div class="cfg-status" id="af-cf-status"></div>
+          <p class="f-note">Belum punya akun? Daftar gratis di <a href="https://cloudinary.com/users/register/free" target="_blank" rel="noopener" style="color:var(--amber)">cloudinary.com</a>, lalu buat Upload Preset dengan Signing Mode = <b>Unsigned</b>.</p>
+        </div>
+      </div>
+
       <!-- Hari Besar Islam -->
       <div class="acc" data-acc="hari-besar">
         <div class="acc-head">📅 Hari Besar Islam</div>
@@ -415,7 +449,16 @@
       <div class="acc" data-acc="bg">
         <div class="acc-head">🖼 Background</div>
         <div class="acc-body">
-          <p class="f-note">Upload gambar hanya bisa dilakukan langsung di TV. Durasi &amp; transisi bisa diatur dari sini.</p>
+          <p class="f-note">Upload gambar dari HP di bawah ini — otomatis terkirim ke slideshow TV. Durasi &amp; transisi bisa diatur di sini juga.</p>
+          <div class="file-upload-row">
+            <div class="file-btn" id="af-btn-upload-bg">
+              📤 Pilih Gambar (bisa lebih dari satu)
+              <input type="file" id="af-file-bg" accept="image/*" multiple>
+            </div>
+          </div>
+          <div class="upload-progress" id="af-progress-bg"></div>
+          <div class="media-list" id="af-list-bg"><div class="media-empty">Memuat...</div></div>
+          <hr class="divider-af">
           <label class="f-label">Durasi per Slide (detik)</label>
           <input class="f-input" type="number" id="af-bg-speed" min="2" max="120">
           <label class="f-label">Model Transisi</label>
@@ -435,7 +478,27 @@
       <div class="acc" data-acc="audio2">
         <div class="acc-head">🔊 Audio</div>
         <div class="acc-body">
-          <p class="f-note">Upload &amp; pilih file audio aktif hanya bisa dilakukan langsung di TV. Volume bisa diatur dari sini.</p>
+          <p class="f-note">Upload MP3 dari HP di bawah ini — otomatis tersimpan ke TV. Volume bisa diatur di sini juga.</p>
+          <label class="f-label">Jenis Audio</label>
+          <select class="f-input" id="af-sel-audio-target">
+            <option value="adzan">Adzan</option>
+            <option value="pre-adzan">Pra-Adzan (contoh: Al-Fatihah)</option>
+            <option value="alarm">Alarm / Notifikasi</option>
+          </select>
+          <div class="file-upload-row">
+            <div class="file-btn" id="af-btn-upload-audio">
+              📤 Pilih File MP3
+              <input type="file" id="af-file-audio" accept="audio/mpeg,audio/mp3,.mp3">
+            </div>
+          </div>
+          <div class="upload-progress" id="af-progress-audio"></div>
+          <div class="f-label" style="margin-top:10px;">Adzan</div>
+          <div class="media-list" id="af-list-audio-adzan"><div class="media-empty">Memuat...</div></div>
+          <div class="f-label">Pra-Adzan</div>
+          <div class="media-list" id="af-list-audio-pre-adzan"><div class="media-empty">Memuat...</div></div>
+          <div class="f-label">Alarm</div>
+          <div class="media-list" id="af-list-audio-alarm"><div class="media-empty">Memuat...</div></div>
+          <hr class="divider-af">
           <div class="row"><div class="label">🔇 Mute Semua</div>
             <label class="switch"><input type="checkbox" id="af-mute"><span class="slider"></span></label>
           </div>
@@ -613,6 +676,9 @@
   var deviceId = null;
   var commandsRef = null;
   var suppressEcho = false; // hindari slider "melompat" saat kita sendiri yang mengubah
+  var cloudinaryConfig = { cloudName: '', uploadPreset: '' };
+  var MAX_IMAGE_MB = 8;
+  var MAX_AUDIO_MB = 12;
 
   var CITY_LIST = ["Jakarta","Bogor","Depok","Tangerang","Bekasi","Bandung","Cimahi","Garut","Tasikmalaya","Cirebon","Sukabumi","Sumedang","Cianjur","Purwakarta","Karawang","Subang","Majalengka","Kuningan","Indramayu","Semarang","Solo","Yogyakarta","Magelang","Salatiga","Pekalongan","Tegal","Purwokerto","Cilacap","Banyumas","Kebumen","Purworejo","Wonosobo","Kudus","Jepara","Demak","Grobogan","Rembang","Blora","Pati","Kendal","Batang","Pemalang","Brebes","Surabaya","Malang","Sidoarjo","Gresik","Mojokerto","Pasuruan","Probolinggo","Jember","Banyuwangi","Kediri","Blitar","Tulungagung","Madiun","Nganjuk","Jombang","Bojonegoro","Tuban","Lamongan","Bangkalan","Pamekasan","Sumenep","Bondowoso","Situbondo","Lumajang","Medan","Binjai","Pematangsiantar","Tebing Tinggi","Kisaran","Padangsidempuan","Aceh","Sabang","Lhokseumawe","Langsa","Padang","Bukittinggi","Payakumbuh","Solok","Sawahlunto","Pekanbaru","Dumai","Batam","Tanjungpinang","Jambi","Palembang","Prabumulih","Lubuklinggau","Bengkulu","Bandar Lampung","Metro","Pontianak","Singkawang","Palangkaraya","Banjarmasin","Banjarbaru","Balikpapan","Samarinda","Bontang","Tarakan","Nunukan","Makassar","Parepare","Palopo","Kendari","Baubau","Palu","Gorontalo","Manado","Bitung","Tomohon","Kotamobagu","Ambon","Ternate","Tidore","Denpasar","Singaraja","Mataram","Bima","Kupang","Ende","Jayapura","Sorong","Merauke","Manokwari"].sort();
 
@@ -962,6 +1028,8 @@
       var doc = snap.data();
       if (!doc) return;
 
+      loadCloudinaryConfig(doc.cloudinaryConfig);
+
       var s = doc.state;
       if (s){
         suppressEcho = true;
@@ -1060,6 +1128,8 @@
           c.classList.toggle('active-tema', c.dataset.theme === (s.currentTheme||'default'));
         });
 
+        renderMediaLists(s.mediaSummary);
+
         setTimeout(function(){ suppressEcho = false; }, 50);
       }
 
@@ -1092,6 +1162,187 @@
         '<div class="cat-btn" data-run="'+item.code+'" data-label="'+item.label.replace(/"/g,'&quot;')+'">Jalankan</div></div>';
     }).join('');
     $('cat-list').innerHTML = html || '<div class="sub">Tidak ditemukan.</div>';
+  }
+
+  // ===================== Media Upload (Cloudinary) =====================
+
+  function loadCloudinaryConfig(cfg){
+    cloudinaryConfig.cloudName = (cfg && cfg.cloudName) || '';
+    cloudinaryConfig.uploadPreset = (cfg && cfg.uploadPreset) || '';
+    $('af-cf-cloud-name').value = cloudinaryConfig.cloudName;
+    $('af-cf-upload-preset').value = cloudinaryConfig.uploadPreset;
+    renderCloudinaryStatus();
+  }
+
+  function renderCloudinaryStatus(){
+    var el = $('af-cf-status');
+    var ok = cloudinaryConfig.cloudName && cloudinaryConfig.uploadPreset;
+    el.className = 'cfg-status ' + (ok ? 'ok' : 'missing');
+    el.textContent = ok
+      ? '✓ Cloudinary siap dipakai untuk upload.'
+      : '⚠ Isi Cloud Name & Upload Preset dulu sebelum upload media.';
+  }
+
+  function saveCloudinaryConfig(){
+    var cloudName = $('af-cf-cloud-name').value.trim();
+    var uploadPreset = $('af-cf-upload-preset').value.trim();
+    if (!cloudName || !uploadPreset){
+      showToast('Isi Cloud Name & Upload Preset dulu');
+      return;
+    }
+    cloudinaryConfig.cloudName = cloudName;
+    cloudinaryConfig.uploadPreset = uploadPreset;
+    db.collection('devices').doc(deviceId).set({
+      cloudinaryConfig: { cloudName: cloudName, uploadPreset: uploadPreset }
+    }, { merge: true }).then(function(){
+      renderCloudinaryStatus();
+      showToast('Pengaturan Cloudinary disimpan ✓');
+    }).catch(function(){
+      showToast('Gagal menyimpan pengaturan');
+    });
+  }
+
+  function uploadToCloudinary(file, onProgress){
+    return new Promise(function(resolve, reject){
+      if (!cloudinaryConfig.cloudName || !cloudinaryConfig.uploadPreset){
+        reject(new Error('Cloudinary belum dikonfigurasi'));
+        return;
+      }
+      var url = 'https://api.cloudinary.com/v1_1/' + cloudinaryConfig.cloudName + '/auto/upload';
+      var fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', cloudinaryConfig.uploadPreset);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.upload.onprogress = function(e){
+        if (onProgress && e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      };
+      xhr.onload = function(){
+        try {
+          var res = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && res.secure_url){
+            resolve(res.secure_url);
+          } else {
+            reject(new Error((res.error && res.error.message) || 'Upload gagal (HTTP ' + xhr.status + ')'));
+          }
+        } catch (e){
+          reject(new Error('Respon Cloudinary tidak valid'));
+        }
+      };
+      xhr.onerror = function(){ reject(new Error('Gagal terhubung ke Cloudinary')); };
+      xhr.send(fd);
+    });
+  }
+
+  function handleBackgroundFiles(input){
+    var files = input.files;
+    if (!files || !files.length) return;
+    if (!cloudinaryConfig.cloudName || !cloudinaryConfig.uploadPreset){
+      showToast('⚠ Atur Cloudinary dulu di kartu "Upload Media"');
+      input.value = '';
+      return;
+    }
+
+    var progressEl = $('af-progress-bg');
+    var btn = $('af-btn-upload-bg');
+    btn.classList.add('uploading');
+    progressEl.classList.add('show');
+
+    var queue = Array.prototype.slice.call(files);
+    var total = files.length, done = 0;
+
+    function uploadNext(){
+      if (!queue.length){
+        btn.classList.remove('uploading');
+        progressEl.classList.remove('show');
+        input.value = '';
+        showToast('Semua gambar terkirim ke TV ✓');
+        return;
+      }
+      var file = queue.shift();
+      if (file.size > MAX_IMAGE_MB * 1024 * 1024){
+        showToast('❌ ' + file.name + ' terlalu besar (maks ' + MAX_IMAGE_MB + 'MB)');
+        done++;
+        uploadNext();
+        return;
+      }
+      progressEl.textContent = 'Mengupload ' + file.name + '... (' + (done + 1) + '/' + total + ')';
+      uploadToCloudinary(file, function(pct){
+        progressEl.textContent = 'Mengupload ' + file.name + '... ' + pct + '%';
+      }).then(function(url){
+        sendValue('addMediaFromUrl', { url: url, name: file.name, kind: 'image' });
+        done++;
+        uploadNext();
+      }).catch(function(err){
+        console.error(err);
+        showToast('❌ Gagal upload ' + file.name);
+        done++;
+        uploadNext();
+      });
+    }
+    uploadNext();
+  }
+
+  function handleAudioFile(input){
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (!cloudinaryConfig.cloudName || !cloudinaryConfig.uploadPreset){
+      showToast('⚠ Atur Cloudinary dulu di kartu "Upload Media"');
+      input.value = '';
+      return;
+    }
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024){
+      showToast('❌ File terlalu besar (maks ' + MAX_AUDIO_MB + 'MB)');
+      input.value = '';
+      return;
+    }
+    var target = $('af-sel-audio-target').value;
+    var progressEl = $('af-progress-audio');
+    var btn = $('af-btn-upload-audio');
+    btn.classList.add('uploading');
+    progressEl.classList.add('show');
+    progressEl.textContent = 'Mengupload ' + file.name + '... 0%';
+
+    function resetUploadUi(){
+      btn.classList.remove('uploading');
+      progressEl.classList.remove('show');
+      input.value = '';
+    }
+
+    uploadToCloudinary(file, function(pct){
+      progressEl.textContent = 'Mengupload ' + file.name + '... ' + pct + '%';
+    }).then(function(url){
+      sendValue('addMediaFromUrl', { url: url, name: file.name, kind: 'audio', target: target });
+      showToast('Audio terkirim ke TV ✓');
+      resetUploadUi();
+    }).catch(function(err){
+      console.error(err);
+      showToast('❌ Gagal upload audio');
+      resetUploadUi();
+    });
+  }
+
+  function renderMediaLists(summary){
+    summary = summary || {};
+
+    function renderList(elId, names){
+      var el = $(elId);
+      if (!el) return;
+      if (!names || !names.length){
+        el.innerHTML = '<div class="media-empty">Belum ada file.</div>';
+        return;
+      }
+      el.innerHTML = names.map(function(n){
+        return '<div class="media-list-item"><span class="nm">' + n + '</span></div>';
+      }).join('');
+    }
+
+    renderList('af-list-bg', summary.backgroundNames);
+    var audio = summary.audio || {};
+    renderList('af-list-audio-adzan', audio['adzan']);
+    renderList('af-list-audio-pre-adzan', audio['pre-adzan']);
+    renderList('af-list-audio-alarm', audio['alarm']);
   }
 
   // ===================== Event handlers UI =====================
@@ -1166,6 +1417,11 @@
         cityApi: $('af-masjid-cityapi').value
       }, 'Data masjid disimpan');
     });
+
+    // Upload Media (Cloudinary)
+    $('af-btn-save-cloudinary').addEventListener('click', saveCloudinaryConfig);
+    $('af-file-bg').addEventListener('change', function(){ handleBackgroundFiles(this); });
+    $('af-file-audio').addEventListener('change', function(){ handleAudioFile(this); });
 
     // Hari Besar Islam
     $('af-event-reset').addEventListener('click', resetEventForm);
